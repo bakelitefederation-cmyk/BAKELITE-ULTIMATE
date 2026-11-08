@@ -290,7 +290,10 @@ export async function createSupabaseDb({ url, key, fetchImpl = fetch, table = "b
   };
   let db = { users: {}, tickets: [], apps: [], counters: { ticket: 0, app: 0 } };
   const res = await fetchImpl(`${base}?id=eq.1&select=data`, { headers });
-  if (!res.ok) throw new Error(`Supabase: не удалось прочитать данные (HTTP ${res.status}). Проверьте SUPABASE_URL, SUPABASE_KEY и создание таблицы.`);
+  if (!res.ok) {
+    const body = (await res.text().catch(() => "")).slice(0, 300);
+    throw new Error(`Supabase: не удалось прочитать данные (HTTP ${res.status}) по адресу ${base}. Ответ: ${body}`);
+  }
   const rows = await res.json();
   const loaded = rows?.[0]?.data;
   if (loaded && typeof loaded === "object") db = { ...db, ...loaded, counters: { ...db.counters, ...(loaded.counters ?? {}) } };
