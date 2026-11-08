@@ -31,6 +31,8 @@ export function readConfig(env = process.env) {
     aiModel: env.AI_MODEL ?? "",
     vtKey: env.VIRUSTOTAL_API_KEY ?? "",
     dataDir: env.DATA_DIR ?? "./data",
+    supabaseUrl: (env.SUPABASE_URL ?? "").trim(),
+    supabaseKey: (env.SUPABASE_KEY ?? "").trim(),
   };
 }
 
@@ -427,6 +429,42 @@ export function createDb(dir) {
     catch (e) { console.error("не удалось сохранить db.json:", e.message); }
   };
   const save = () => { if (!timer) { timer = setTimeout(flush, 400); timer.unref?.(); } };
+  return { data: db, save, flush };
+}
+
+// Хранение в Supabase: всё состояние бота лежит одной JSON-записью в таблице bot_state.
+// Нужен ключ service_role (секретный). Таблица создаётся скриптом supabase.sql.
+export async function createSupabaseDb({ url, key, fetchImpl = fetch, table = "bot_state" }) {
+  const base = `${url.replace(/\/$/, "")}/rest/v1/${table}`;
+  const headers = { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" };
+  let db = { users: {}, tickets: [], apps: [], counters: { ticket: 0, app: 0 } };
+  const res = await fetchImpl(`${base}?id=eq.1&select=data`, { headers });
+  if (!res.ok) throw new Error(`Supabase: не удалось прочитать данные (HTTP ${res.status}). Проверьте SUPABASE_URL, SUPABASE_KEY и что таблица ${table} создана (файл supabase.sql).`);
+  const rows = await res.json();
+  const loaded = rows?.[0]?.data;
+  if (loaded && typeof loaded === "object") db = { ...db, ...loaded, counters: { ...db.counters, ...(loaded.counters ?? {}) } };
+
+  let timer = null, writing = null, dirty = false;
+  const write = async () => {
+    if (writing) { dirty = true; return writing; }
+    do {
+      dirty = false;
+      writing = (async () => {
+        try {
+          const r = await fetchImpl(`${base}?on_conflict=id`, {
+            method: "POST",
+            headers: { ...headers, Prefer: "resolution=merge-duplicates,return=minimal" },
+            body: JSON.stringify({ id: 1, data: db, updated_at: new Date().toISOString() }),
+          });
+          if (!r.ok) console.error("Supabase: ошибка сохранения", r.status, (await r.text()).slice(0, 200));
+        } catch (e) { console.error("Supabase: ошибка сохранения:", e.message); }
+      })();
+      await writing;
+      writing = null;
+    } while (dirty);
+  };
+  const flush = () => { if (timer) { clearTimeout(timer); timer = null; } return write(); };
+  const save = () => { if (!timer) { timer = setTimeout(flush, 1000); timer.unref?.(); } };
   return { data: db, save, flush };
 }
 
@@ -1376,8 +1414,20 @@ async function main() {
   }
   const { Telegraf } = await import("telegraf");
   const bot = new Telegraf(cfg.token, { handlerTimeout: 90_000 });
-  const store = createDb(cfg.dataDir);
+  let store;
+  if (cfg.supabaseUrl && cfg.supabaseKey) {
+    store = await createSupabaseDb({ url: cfg.supabaseUrl, key: cfg.supabaseKey });
+    console.log("💾 Данные хранятся в Supabase");
+  } else {
+    store = createDb(cfg.dataDir);
+    console.log("💾 Данные хранятся в файле (на бесплатных хостингах он стирается, подключите Supabase)");
+  }
   buildBot(bot, { cfg, store });
+
+  // Маленький HTTP-ответ: нужен хостингам вроде Render и внешнему пингеру, чтобы сервис не засыпал
+  const http = await import("node:http");
+  http.createServer((_, res) => { res.writeHead(200, { "Content-Type": "text/plain" }); res.end("ok"); })
+    .listen(Number(process.env.PORT) || 3000);
 
   await bot.telegram.setMyCommands([
     { command: "menu", description: "Главное меню" },
@@ -1390,7 +1440,12 @@ async function main() {
   ]).catch((e) => console.error("setMyCommands:", e.message));
 
   const timer = setInterval(() => store.flush(), 30_000);
-  const stop = (sig) => { clearInterval(timer); store.flush(); try { bot.stop(sig); } catch {} process.exit(0); };
+  const stop = async (sig) => {
+    clearInterval(timer);
+    try { bot.stop(sig); } catch {}
+    await Promise.race([Promise.resolve(store.flush()), new Promise((r) => setTimeout(r, 4000))]);
+    process.exit(0);
+  };
   process.once("SIGINT", () => stop("SIGINT"));
   process.once("SIGTERM", () => stop("SIGTERM"));
   process.on("unhandledRejection", (e) => console.error("unhandledRejection:", e));
