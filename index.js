@@ -22,6 +22,7 @@ export function readConfig(env = process.env) {
   return {
     token: env.BOT_TOKEN ?? "",
     adminChatId: env.ADMIN_CHAT_ID ? String(env.ADMIN_CHAT_ID).trim() : "",
+    adminIds: (env.ADMIN_IDS ?? "").split(/[\s,]+/).filter(Boolean),
     aiBase: (env.AI_BASE_URL ?? "").replace(/\/$/, ""),
     aiKey: env.AI_API_KEY ?? "",
     aiModel: env.AI_MODEL ?? "",
@@ -573,21 +574,39 @@ export function buildBot(bot, deps) {
   const ticketOf = (n) => db.tickets.find((t) => t.num === Number(n));
   const logTicket = (t, text) => { t.updatedAt = now(); t.log.push({ ts: now(), text }); };
 
+  const NOT_ADMIN = "⛔ Эта функция только для администраторов.";
+  const NOT_DEF = "⛔ Вы не защитник. Эта функция доступна только защитникам из списка. Подать заявку: /join";
+  const adminIds = new Set((cfg.adminIds ?? []).map(String));
+  const roleCache = new Map();
+  async function isAdmin(userId) {
+    if (adminIds.has(String(userId))) return true;
+    if (!adminChat) return false;
+    const c = roleCache.get(userId);
+    if (c && now() - c.ts < 60000) return c.v;
+    let v = false;
+    try { const m = await tg.getChatMember(adminChat, userId); v = ["creator", "administrator"].includes(m.status); } catch {}
+    roleCache.set(userId, { ts: now(), v });
+    return v;
+  }
+  const isDefender = async (userId) => db.users[userId]?.role === "defender" || (await isAdmin(userId));
+
   bot.use(async (ctx, next) => {
     if (!ctx.from || ctx.from.is_bot) return;
     const type = ctx.chat?.type;
     const data = ctx.callbackQuery?.data ?? "";
-    if (type && type !== "private" && !/^(tk_|app_)/.test(data)) return;
+    const msgText = ctx.message?.text ?? "";
+    if (type && type !== "private" && !/^(tk_|app_)/.test(data) && !/^\/(id|admin|tickets)(@\w+)?(\s|$)/.test(msgText)) return;
     const u = getUser(ctx.from);
     ctx.state.u = u;
     u.stamps.msg = recent(u.stamps.msg, 10000);
     if (u.stamps.msg.length > 25) return;
-    if (ctx.callbackQuery && !/^(tk_|app_)/.test(data)) ctx.answerCbQuery().catch(() => {});
+    if (ctx.callbackQuery && !/^(tk_|app_|adm_|dt_)/.test(data)) ctx.answerCbQuery().catch(() => {});
     return next();
   });
 
   const showMenu = (ctx) => { reset(ctx.state.u); return say(ctx, WELCOME, MENU); };
   bot.start(showMenu);
+  bot.command("id", (ctx) => say(ctx, `ID этого чата: <code>${ctx.chat.id}</code>`));
   bot.command("menu", showMenu);
   bot.command("cancel", async (ctx) => { reset(ctx.state.u); await say(ctx, "Действие отменено."); return say(ctx, WELCOME, MENU); });
   bot.action("cmd_menu", async (ctx) => { reset(ctx.state.u); return edit(ctx, WELCOME, MENU); });
@@ -726,7 +745,8 @@ export function buildBot(bot, deps) {
     return app;
   }
   bot.action(/^app_(ok|no)_(\d+)$/, async (ctx) => {
-    if (!isAdminChat(ctx)) return ctx.answerCbQuery("Нет доступа", { show_alert: true }).catch(() => {});
+    if (!(ctx.chat.type === "private" || isAdminChat(ctx))) return ctx.answerCbQuery("Нет доступа", { show_alert: true }).catch(() => {});
+    if (!(await isAdmin(ctx.from.id))) return ctx.answerCbQuery(NOT_ADMIN, { show_alert: true }).catch(() => {});
     const app = db.apps.find((a) => a.id === Number(ctx.match[2]));
     if (!app) return ctx.answerCbQuery("Заявка не найдена", { show_alert: true }).catch(() => {});
     if (app.status !== "pending") return ctx.answerCbQuery("Решение уже принято", { show_alert: true }).catch(() => {});
@@ -840,7 +860,8 @@ export function buildBot(bot, deps) {
     return say(ctx, `<b>Что сделать прямо сейчас</b>\n\n${steps.map((s, i) => `${i + 1}. ${esc(s)}`).join("\n")}`);
   });
   bot.action(/^tk_(work|done|close|reply)_(\d+)$/, async (ctx) => {
-    if (!isAdminChat(ctx)) return ctx.answerCbQuery("Нет доступа").catch(() => {});
+    if (!(ctx.chat.type === "private" || isAdminChat(ctx))) return ctx.answerCbQuery("Нет доступа").catch(() => {});
+    if (!(await isDefender(ctx.from.id))) return ctx.answerCbQuery(NOT_DEF, { show_alert: true }).catch(() => {});
     const [, act, n] = ctx.match;
     const t = ticketOf(n);
     if (!t) return ctx.answerCbQuery("Не найдена").catch(() => {});
@@ -861,7 +882,9 @@ export function buildBot(bot, deps) {
     if (act === "close") { t.status = "closed"; logTicket(t, `Закрыта ${who}`); }
     store.save();
     await ctx.answerCbQuery("Готово").catch(() => {});
-    await edit(ctx, adminTicketText(t), adminTicketRows(t));
+    const trows = adminTicketRows(t);
+    if (ctx.chat.type === "private") trows.push([btn("⬅️ К списку", "dt_list")]);
+    await edit(ctx, adminTicketText(t), trows);
     if (t.userId) notify(t.userId, `Статус заявки ${ticketCode(t.num)} изменён: ${STATUS[t.status]}`, [[btn("📊 Статус", "cmd_status")]]);
   });
 
@@ -907,6 +930,79 @@ export function buildBot(bot, deps) {
     return edit(ctx, "🔎 Пришлите ссылку для проверки. Переходить по ней самим не нужно:", [BACK]);
   });
 
+  const guard = (check, denied) => (fn) => async (ctx) => {
+    if (ctx.chat?.type !== "private" || !(await check(ctx.from.id))) return ctx.answerCbQuery(denied, { show_alert: true }).catch(() => {});
+    await ctx.answerCbQuery().catch(() => {});
+    return fn(ctx);
+  };
+  const adminOnly = guard(isAdmin, NOT_ADMIN);
+  const defOnly = guard(isDefender, NOT_DEF);
+
+  const adminHomeText = () => {
+    const by = (st) => db.tickets.filter((t) => t.status === st).length;
+    const defs = Object.values(db.users).filter((u) => u.role === "defender").length;
+    const pend = db.apps.filter((a) => a.status === "pending").length;
+    return `<b>🛠 Админ-панель</b>\n\nПользователей: ${Object.keys(db.users).length}\nЗащитников: ${defs}\nЗаявок в защитники в ожидании: ${pend}\n\n<b>Обращения</b>\n🆕 Новых: ${by("new")}\n🔧 В работе: ${by("work")}\n❓ Нужна информация: ${by("info")}\n✅ Решено: ${by("solved")}\n🚫 Закрыто: ${by("closed")}`;
+  };
+  const ADM_ROWS = [
+    [btn("📋 Открытые заявки", "dt_list")],
+    [btn("📝 Заявки в защитники", "adm_apps")],
+    [btn("🛡 Защитники", "adm_defs")],
+    [btn("🔄 Обновить", "adm_home")],
+    BACK,
+  ];
+  async function ticketList(ctx, viaButton) {
+    const send = viaButton ? edit : say;
+    const list = db.tickets.filter(isOpen)
+      .sort((a, b) => PRIORITIES[b.prio].rank - PRIORITIES[a.prio].rank || a.createdAt - b.createdAt).slice(0, 15);
+    const rows = list.map((t) => [btn(`${PRIORITIES[t.prio].icon} ${ticketCode(t.num)} · ${CATEGORIES[t.cat].icon} ${STATUS[t.status]}`, `dt_${t.num}`)]);
+    rows.push((await isAdmin(ctx.from.id)) ? [btn("⬅️ Панель", "adm_home")] : BACK);
+    return send(ctx, list.length ? "📋 <b>Открытые заявки</b> (срочные сверху, до 15):" : "Открытых заявок нет. 🎉", rows);
+  }
+  async function defsView(ctx, viaButton = true) {
+    const send = viaButton ? edit : say;
+    const defs = Object.values(db.users).filter((u) => u.role === "defender");
+    const lines = defs.slice(0, 40).map((u) => `• ${esc(u.name || "без имени")} ${u.username ? "@" + esc(u.username) : ""} · id ${u.id}`).join("\n");
+    const rows = defs.slice(0, 20).map((u) => [btn(`❌ Снять ${u.username ? "@" + u.username : u.id}`, `adm_rm_${u.id}`)]);
+    rows.push([btn("➕ Добавить защитника", "adm_add")], [btn("⬅️ Панель", "adm_home")]);
+    return send(ctx, `<b>🛡 Защитники (${defs.length})</b>\n\n${lines || "Список пуст."}`, rows);
+  }
+
+  bot.command("admin", async (ctx) => {
+    if (!(await isAdmin(ctx.from.id))) return say(ctx, NOT_ADMIN);
+    if (ctx.chat.type !== "private") return say(ctx, "Панель открывается в личных сообщениях с ботом: напишите ему /admin.");
+    reset(ctx.state.u);
+    return say(ctx, adminHomeText(), ADM_ROWS);
+  });
+  bot.command("tickets", async (ctx) => {
+    if (!(await isDefender(ctx.from.id))) return say(ctx, NOT_DEF);
+    if (ctx.chat.type !== "private") return say(ctx, "Эта команда работает в личных сообщениях с ботом.");
+    reset(ctx.state.u);
+    return ticketList(ctx, false);
+  });
+  bot.action("adm_home", adminOnly(async (ctx) => { reset(ctx.state.u); return edit(ctx, adminHomeText(), ADM_ROWS); }));
+  bot.action("dt_list", defOnly((ctx) => ticketList(ctx, true)));
+  bot.action(/^dt_(\d+)$/, defOnly(async (ctx) => {
+    const t = ticketOf(ctx.match[1]);
+    if (!t) return edit(ctx, "Заявка не найдена.", [BACK]);
+    return edit(ctx, `${adminTicketText(t)}\n\nОбновлена: ${ago(t.updatedAt, now())}`, [...adminTicketRows(t), [btn("⬅️ К списку", "dt_list")]]);
+  }));
+  bot.action("adm_apps", adminOnly(async (ctx) => {
+    const pend = db.apps.filter((a) => a.status === "pending").slice(0, 10);
+    await edit(ctx, pend.length ? `📝 Заявок в ожидании: ${pend.length}. Каждая ниже отдельным сообщением.` : "Заявок в защитники в ожидании нет.", [[btn("⬅️ Панель", "adm_home")]]);
+    for (const a of pend) await say(ctx, appText(a), [[btn("✅ Принять", `app_ok_${a.id}`), btn("❌ Отклонить", `app_no_${a.id}`)]]);
+  }));
+  bot.action("adm_defs", adminOnly(async (ctx) => { reset(ctx.state.u); return defsView(ctx); }));
+  bot.action(/^adm_rm_(\d+)$/, adminOnly(async (ctx) => {
+    const target = db.users[ctx.match[1]];
+    if (target?.role === "defender") { target.role = "user"; store.save(); notify(target.id, "Вы исключены из команды защитников."); }
+    return defsView(ctx);
+  }));
+  bot.action("adm_add", adminOnly(async (ctx) => {
+    ctx.state.u.state = "adm_add"; ctx.state.u.data = {}; store.save();
+    return edit(ctx, "Пришлите id или @username пользователя. Он должен хотя бы раз запустить бота (/start).", [[btn("⬅️ Отмена", "adm_defs")]]);
+  }));
+
   const helpText = "ℹ️ <b>Справка</b>\n\nИспользуйте кнопки меню. Команды: /menu, /report, /join, /status, /cancel.\n/delete удаляет ваши данные из бота.";
   const helpRows = [[btn("🗑 Удалить данные", "help_del")], BACK];
   bot.command("help", (ctx) => say(ctx, helpText, helpRows));
@@ -949,6 +1045,16 @@ export function buildBot(bot, deps) {
       case "report_desc": return onDescription(ctx, text);
       case "report_evidence":
         return say(ctx, "Пришлите файл или скриншот либо нажмите «Готово».", evidenceRows(u.data.evidence?.length ?? 0));
+      case "adm_add": {
+        if (!(await isAdmin(ctx.from.id))) { reset(u); return say(ctx, NOT_ADMIN); }
+        const key = text.replace(/^@/, "").trim().toLowerCase();
+        const target = /^\d+$/.test(key) ? db.users[key] : Object.values(db.users).find((x) => (x.username ?? "").toLowerCase() === key);
+        if (!target) return say(ctx, "Пользователь не найден. Пусть он напишет боту /start. Пришлите id или @username ещё раз:", [[btn("⬅️ Отмена", "adm_defs")]]);
+        target.role = "defender";
+        reset(u);
+        notify(target.id, "🛡 Вас добавили в команду защитников!", [BACK]);
+        return defsView(ctx, false);
+      }
       case "user_reply": {
         const t = ticketOf(u.data.num);
         if (t && t.userId === u.id) {
@@ -958,6 +1064,7 @@ export function buildBot(bot, deps) {
         reset(u); return say(ctx, "Передано команде.", [BACK]);
       }
       case "admin_reply": {
+        if (!(await isDefender(ctx.from.id))) { reset(u); return say(ctx, NOT_DEF); }
         const tk = ticketOf(u.data.num);
         if (tk?.userId) {
           tk.msgs.push({ from: "team", ts: now(), text }); tk.firstResponseAt ??= now(); tk.updatedAt = now(); store.save();
