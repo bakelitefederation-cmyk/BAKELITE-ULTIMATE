@@ -22,7 +22,7 @@ export function readConfig(env = process.env) {
   return {
     token: env.BOT_TOKEN ?? "",
     adminChatId: env.ADMIN_CHAT_ID ? String(env.ADMIN_CHAT_ID).trim() : "",
-    adminIds: (env.ADMIN_IDS ?? "").split(/[\s,]+/).filter(Boolean),
+    adminIds: String(env.ADMIN_IDS ?? env.ADMIN_CHAT_IDS ?? env.ADMIN_ID ?? "").split(/[^0-9]+/).filter(Boolean),
     aiBase: (env.AI_BASE_URL ?? "").replace(/\/$/, ""),
     aiKey: env.AI_API_KEY ?? "",
     aiModel: env.AI_MODEL ?? "",
@@ -969,7 +969,7 @@ export function buildBot(bot, deps) {
   }
 
   bot.command("admin", async (ctx) => {
-    if (!(await isAdmin(ctx.from.id))) return say(ctx, NOT_ADMIN);
+    if (!(await isAdmin(ctx.from.id))) return say(ctx, `${NOT_ADMIN}\nВаш id: <code>${ctx.from.id}</code>. Админы, которых видит бот: ${adminIds.size ? [...adminIds].join(", ") : "ADMIN_IDS не задан или пуст"}.`);
     if (ctx.chat.type !== "private") return say(ctx, "Панель открывается в личных сообщениях с ботом: напишите ему /admin.");
     reset(ctx.state.u);
     return say(ctx, adminHomeText(), ADM_ROWS);
