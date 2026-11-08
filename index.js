@@ -51,7 +51,7 @@ export const WELCOME =
 export const EMERGENCY = "🚨 <b>Если опасность прямо сейчас, сначала звоните 112 (в Украине полиция 102).</b> Бот не заменяет экстренные службы.";
 
 export const RESOURCES = `<b>Куда обращаться</b>
-• Угроза жизни, насилие: <b>112</b>, полиция in Украине: <b>102</b>.
+• Угроза жизни, насилие: <b>112</b>, полиция в Украине: <b>102</b>.
 • Украина, киберпреступления: Киберполиция, форма обращения на cyberpolice.gov.ua.
 • Взлом организаций и госсистем: CERT-UA (cert.gov.ua).
 • Материалы с насилием над детьми <b>не пересылайте</b>: сообщите в полицию и на горячую линию защиты детей.
@@ -144,163 +144,262 @@ export const QUESTIONS = [
 ];
 export const ARTICLES = [
 { id: "first", icon: "⏱", title: "Первые 30 минут", keywords: "с чего начать первые шаги общий план паника",
-body: <b>Первые 30 минут: общий план</b>\n\n1. <b>Остановитесь.</b> Не отвечайте злоумышленнику, не платите и не отправляйте ничего ещё.\n2. <b>Сохраните всё.</b> Скриншоты со ссылкой and временем, переписка, номера счетов, адреса кошельков. Ничего не удаляйте.\n3. <b>Защитите деньги.</b> Если речь о карте или счёте, звоните в банк по номеру на карте или в приложении.\n4. <b>Защитите аккаунты.</b> Смените пароли с чистого устройства, включите двухфакторную защиту, завершите чужие сеансы.\n5. <b>Расскажите близким</b> и коллегам, если мошенник мог использовать ваши контакты.\n6. <b>Оформите заявку</b> в боте или обратитесь в полицию.\n\nНе стыдно, что вас обманули: этим занимаются профессионалы. },
+body: `<b>Первые 30 минут: общий план</b>\n\n1. <b>Остановитесь.</b> Не отвечайте злоумышленнику, не платите и не отправляйте ничего ещё.\n2. <b>Сохраните всё.</b> Скриншоты со ссылкой и временем, переписка, номера счетов, адреса кошельков. Ничего не удаляйте.\n3. <b>Защитите деньги.</b> Если речь о карте или счёте, звоните в банк по номеру на карте или в приложении.\n4. <b>Защитите аккаунты.</b> Смените пароли с чистого устройства, включите двухфакторную защиту, завершите чужие сеансы.\n5. <b>Расскажите близким</b> и коллегам, если мошенник мог использовать ваши контакты.\n6. <b>Оформите заявку</b> в боте или обратитесь в полицию.\n\nНе стыдно, что вас обманули: этим занимаются профессионалы.` },
 { id: "phishing", icon: "🎣", title: "Фишинг: перешли по ссылке", keywords: "фишинг ссылка перешёл ввёл данные письмо сайт подделка",
-body: <b>Вы перешли по подозрительной ссылке или ввели данные</b>\n\n<b>Только открыли ссылку:</b> закройте вкладку и ничего не вводите. Если ничего не скачивалось, обычно опасности нет. Проверьте устройство антивирусом.\n\n<b>Ввели пароль:</b> немедленно смените его на настоящем сайте сервиса (набрав адрес вручную) и везде, где использовали такой же. Включите двухфакторную защиту и завершите другие сеансы.\n\n<b>Ввели данные карты или код из SMS:</b> сразу звоните в банк, блокируйте карту и оспаривайте операции.\n\n<b>Скачали файл или установили приложение:</b> отключите интернет, запустите антивирус, при подозрении сделайте сброс устройства и смените пароли с другого устройства.\n\nСаму ссылку можно проверить в разделе «🔎 Проверить ссылку». },
+body: `<b>Вы перешли по подозрительной ссылке или ввели данные</b>\n\n<b>Только открыли ссылку:</b> закройте вкладку и ничего не вводите. Если ничего не скачивалось, обычно опасности нет. Проверьте устройство антивирусом.\n\n<b>Ввели пароль:</b> немедленно смените его на настоящем сайте сервиса (набрав адрес вручную) и везде, где использовали такой же. Включите двухфакторную защиту и завершите другие сеансы.\n\n<b>Ввели данные карты или код из SMS:</b> сразу звоните в банк, блокируйте карту и оспаривайте операции.\n\n<b>Скачали файл или установили приложение:</b> отключите интернет, запустите антивирус, при подозрении сделайте сброс устройства и смените пароли с другого устройства.\n\nСаму ссылку можно проверить в разделе «🔎 Проверить ссылку».` },
 { id: "hacked", icon: "🔓", title: "Взломали аккаунт", keywords: "взлом аккаунт пароль telegram instagram google почта двухфакторная сеансы",
-body: <b>Взломали аккаунт: что делать</b>\n\n1. Смените пароль с надёжного устройства.\n2. Завершите все сеансы:\n   • <b>Telegram:</b> Настройки → Устройства → Завершить все другие сеансы.\n   • <b>Google:</b> g.co/recover и проверка безопасности аккаунта.\n   • <b>Instagram:</b> https://instagram.com.\n3. Включите двухфакторную защиту (в Telegram это «Облачный пароль» в разделе «Конфиденциальность»).\n4. Проверьте привязанные телефон и почту: мошенники меняют их первыми. В почте посмотрите правила пересылки писем.\n5. Предупредите контакты, что от вашего имени могут просить деньги.\n6. Если доступ не вернуть, обратитесь в поддержку сервиса и сохраните письма о смене данных.\n\nНе платите «специалистам по восстановлению»: чаще всего это второй обман. },
-{ id: "extortion", icon: "⛓", title: "Шантаж и сэкстошн", keywords: "шантаж вымогательство фото угрожают опубликовать интимные сэкстошн выкуп",
-body: <b>Вас шантажируют</b>\n\n1. <b>Не платите.</b> Выплата почти всегда приводит к новым требованиям.\n2. <b>Не отправляйте</b> больше фото, video или данных.\n3. <b>Не удаляйте переписку.</b> Сделайте скриншоты профиля шантажиста, ссылок, сообщений и реквизитов.\n4. Заблокируйте шантажиста после сохранения доказательств.\n5. Закройте соцсети от посторонних.\n6. Если угрожают рассылкой интимных фото: взрослым помогает StopNCII.org, несовершеннолетним takeitdown.ncmec.org.\n7. Обратитесь в полицию. Вы жертва, и стыдиться нечего. },
+body: `<b>Взломали аккаунт: что делать</b>\n\n1. Смените пароль с надёжного устройства.\n2. Завершите все сеансы:\n   • <b>Telegram:</b> Настройки → Устройства → Завершить все другие сеансы.\n   • <b>Google:</b> g.co/recover и проверка безопасности аккаунта.\n   • <b>Instagram:</b> Настройки → Безопасность → Где вы вошли.\n3. Включите двухфакторную защиту (в Telegram это «Облачный пароль» в разделе «Конфиденциальность»).\n4. Проверьте привязанные телефон и почту: мошенники меняют их первыми. В почте посмотрите правила пересылки писем.\n5. Предупредите контакты, что от вашего имени могут просить деньги.\n6. Если доступ не вернуть, обратитесь в поддержку сервиса и сохраните письма о смене данных.\n\nНе платите «специалистам по восстановлению»: чаще всего это второй обман.` },
+{ id: "extortion", icon: "⛓", title: "Шантаж и секстошн", keywords: "шантаж вымогательство фото угрожают опубликовать интимные сэкстошн выкуп",
+body: `<b>Вас шантажируют</b>\n\n1. <b>Не платите.</b> Выплата почти всегда приводит к новым требованиям.\n2. <b>Не отправляйте</b> больше фото, видео или данных.\n3. <b>Не удаляйте переписку.</b> Сделайте скриншоты профиля шантажиста, ссылок, сообщений и реквизитов.\n4. Заблокируйте шантажиста после сохранения доказательств.\n5. Закройте соцсети от посторонних.\n6. Если угрожают рассылкой интимных фото: взрослым помогает StopNCII.org, несовершеннолетним takeitdown.ncmec.org.\n7. Обратитесь в полицию. Вы жертва, и стыдиться нечего.` },
 { id: "money", icon: "💸", title: "Украли деньги", keywords: "деньги карта банк перевод крипта списание мошенники звонок банка оспорить транзакция",
-body: <b>Деньги ушли мошенникам</b>\n\n<b>Карта и банк:</b>\n1. Сразу позвоните в банк по номеру на карте или в приложении и заблокируйте карту.\n2. Подайте заявление об оспаривании операции, чем раньше, тем лучше.\n3. Сохраните чеки, переписку, реквизиты получателя, время и сумму.\n4. Если «сотрудник банка» звонит сам и просит коды, это мошенник. Положите трубку и перезвоните в банк сами.\n\n<b>Криптовалюта:</b>\n1. Переводы нельзя отменить. Если средства ушли на биржу, сообщите ей хеш транзакции и адрес.\n2. Сохраните адреса кошельков и хеши транзакций.\n3. Те, кто обещает «вернуть крипту» за предоплату, обманывают повторно. },
+body: `<b>Деньги ушли мошенникам</b>\n\n<b>Карта и банк:</b>\n1. Сразу позвоните в банк по номеру на карте или в приложении и заблокируйте карту.\n2. Подайте заявление об оспаривании операции, чем раньше, тем лучше.\n3. Сохраните чеки, переписку, реквизиты получателя, время и сумму.\n4. Если «сотрудник банка» звонит сам и просит коды, это мошенник. Положите трубку и перезвоните в банк сами.\n\n<b>Криптовалюта:</b>\n1. Переводы нельзя отменить. Если средства ушли на биржу, сообщите ей хеш транзакции и адрес.\n2. Сохраните адреса кошельков и хеши транзакций.\n3. Те, кто обещает «вернуть крипту» за предоплату, обманывают повторно.` },
 { id: "malware", icon: "🦠", title: "Вирус или вымогатель", keywords: "вирус вымогатель шифровальщик файлы зашифрованы выкуп троян программа антивирус",
-body: <b>Устройство заражено</b>\n\n1. Отключите устройство от интернета и сети, выньте внешние диски.\n2. Не платите выкуп: расшифровка не гарантирована.\n3. Не удаляйте зашифрованные файлы и сфотографируйте требование.\n4. Проверьте nomoreransom.org: для некоторых вымогателей есть бесплатные расшифровщики.\n5. Восстановите данные из резервной копии на чистой системе.\n6. С другого устройства смените пароли от важных сервисов и почты.\n7. Если заражён рабочий компьютер, сообщите ответственным.\n\nТелефон: удалите неизвестные приложения, отзовите права администратора, при необходимости сделайте сброс до заводских настроек. },
+body: `<b>Устройство заражено</b>\n\n1. Отключите устройство от интернета и сети, выньте внешние диски.\n2. Не платите выкуп: расшифровка не гарантирована.\n3. Не удаляйте зашифрованные файлы и сфотографируйте требование.\n4. Проверьте nomoreransom.org: для некоторых вымогателей есть бесплатные расшифровщики.\n5. Восстановите данные из резервной копии на чистой системе.\n6. С другого устройства смените пароли от важных сервисов и почты.\n7. Если заражён рабочий компьютер, сообщите ответственным.\n\nТелефон: удалите неизвестные приложения, отзовите права администратора, при необходимости сделайте сброс до заводских настроек.` },
 { id: "doxxing", icon: "🪪", title: "Опубликовали мои данные", keywords: "доксинг утечка личные данные адрес телефон опубликовали удалить из поиска",
-body: <b>Ваши данные опубликованы</b>\n\n1. Сделайте скриншоты публикаций со ссылкой и датой.\n2. Пожалуйтесь администрации площадки на раскрытие личных данных.\n3. Попросите поисковик убрать результаты с вашими данными (у Google есть инструмент «Результаты о вас»).\n4. Смените пароли, если опубликованы доступы, и закройте профили.\n5. Предупредите банк и близких, если опубликованы данные карт, документов или адреса.\n6. При угрозах и преследовании обратитесь в полицию.\n\nНе пытайтесь «в ответ» раскрывать данные обидчика: это незаконно и может обернуться против вас. },
+body: `<b>Ваши данные опубликованы</b>\n\n1. Сделайте скриншоты публикаций со ссылкой и датой.\n2. Пожалуйтесь администрации площадки на раскрытие личных данных.\n3. Попросите поисковик убрать результаты с вашими данными (у Google есть инструмент «Результаты о вас»).\n4. Смените пароли, если опубликованы доступы, и закройте профили.\n5. Предупредите банк и близких, если опубликованы данные карт, документов или адреса.\n6. При угрозах и преследовании обратитесь в полицию.\n\nНе пытайтесь «в ответ» раскрывать данные обидчика: это незаконно и может обернуться против вас.` },
 { id: "harassment", icon: "📢", title: "Травля и угрозы", keywords: "травля угрозы буллинг преследование оскорбления",
-body: <b>Травля и угрозы в сети</b>\n\n1. Не вступайте в спор: агрессору нужна реакция.\n2. Сохраняйте скриншоты со ссылками на профили, датой и временем.\n3. Заблокируйте обидчиков и пожалуйтесь на их аккаунты.\n4. Ограничьте приватность: кто может писать вам и видеть публикации.\n5. Расскажите о ситуации близким, вам нужна поддержка.\n6. Если угрожают жизни и безопасности или есть слежка, обращайтесь в полицию (102, 112).\n\nЕсли травят ребёнка, сохраните доказательства, поддержите его и обратитесь в школу и полицию. },
+body: `<b>Травля и угрозы в сети</b>\n\n1. Не вступайте в спор: агрессору нужна реакция.\n2. Сохраняйте скриншоты со ссылками на профили, датой и временем.\n3. Заблокируйте обидчиков и пожалуйтесь на их аккаунты.\n4. Ограничьте приватность: кто может писать вам и видеть публикации.\n5. Расскажите о ситуации близким, вам нужна поддержка.\n6. Если угрожают жизни и безопасности или есть слежка, обращайтесь в полицию (102, 112).\n\nЕсли травят ребёнка, сохраните доказательства, поддержите его и обратитесь в школу и полицию.` },
 { id: "fake", icon: "🎭", title: "Фейковый аккаунт", keywords: "фейк двойник выдают себя за меня поддельный профиль клон",
-body: <b>Кто-то выдаёт себя за вас</b>\n\n1. Сохраните ссылку на профиль и скриншоты его публикаций и сообщений.\n2. Пожалуйтесь через функцию «выдаёт себя за другого человека».\n3. Предупредите друзей и попросите их тоже подать жалобу.\n4. Опубликуйте у себя короткое предупреждение, что настоящий аккаунт только один.\n5. Если мошенник просит деньги от вашего имени, сообщите в полицию и сохраните реквизиты. },
+body: `<b>Кто-то выдаёт себя за вас</b>\n\n1. Сохраните ссылку на профиль и скриншоты его публикаций и сообщений.\n2. Пожалуйтесь через функцию «выдаёт себя за другого человека».\n3. Предупредите друзей и попросите их тоже подать жалобу.\n4. Опубликуйте у себя короткое предупреждение, что настоящий аккаунт только один.\n5. Если мошенник просит деньги от вашего имени, сообщите в полицию и сохраните реквизиты.` },
 { id: "evidence", icon: "🗂", title: "Как сохранить доказательства", keywords: "доказательства скриншоты сохранить переписка полиция журнал",
-body: <b>Как сохранить доказательства</b>\n\n• Делайте <b>полные</b> скриншоты: видны ссылка, дата и время, имя собеседника.\n• Сохраняйте оригиналы переписки, писем и файлов, не редактируйте их.\n• Записывайте ссылки, номера счетов, адреса кошельков, хеши транзакций.\n• Ведите журнал: что и когда произошло, что вы предприняли.\n• Не удаляйте переписку и не очищайте устройство до обращения в полицию.\n\nСтраница может исчезнуть в любой момент, поэтому сохраняйте сразу. },
+body: `<b>Как сохранить доказательства</b>\n\n• Делайте <b>полные</b> скриншоты: видны ссылка, дата и время, имя собеседника.\n• Сохраняйте оригиналы переписки, писем и файлов, не редактируйте их.\n• Записывайте ссылки, номера счетов, адреса кошельков, хеши транзакций.\n• Ведите журнал: что и когда произошло, что вы предприняли.\n• Не удаляйте переписку и не очищайте устройство до обращения в полицию.\n\nСтраница может исчезнуть в любой момент, поэтому сохраняйте сразу.` },
 { id: "whereto", icon: "🏛", title: "Куда обращаться", keywords: "полиция киберполиция куда обратиться заявление 102 112 cert", body: RESOURCES },
 { id: "protect", icon: "🔐", title: "Базовая защита", keywords: "пароли двухфакторная менеджер паролей обновления защита безопасность",
-body: <b>Базовая защита, которая закрывает большинство угроз</b>\n\n• Для каждого сервиса свой длинный пароль, лучше через менеджер паролей.\n• Двухфакторная защита везде, где она есть (лучше приложение-генератор кодов, чем SMS).\n• Регулярно обновляйте систему и приложения.\n• Не устанавливайте программы из непроверенных источников.\n• Никому не называйте коды из SMS, даже «сотрудникам банка».\n• Для важных аккаунтов заведите отдельную почту.\n• Делайте резервные копии важных файлов. },
+body: `<b>Базовая защита, которая закрывает большинство угроз</b>\n\n• Для каждого сервиса свой длинный пароль, лучше через менеджер паролей.\n• Двухфакторная защита везде, где она есть (лучше приложение-генератор кодов, чем SMS).\n• Регулярно обновляйте систему и приложения.\n• Не устанавливайте программы из непроверенных источников.\n• Никому не называйте коды из SMS, даже «сотрудникам банка».\n• Для важных аккаунтов заведите отдельную почту.\n• Делайте резервные копии важных файлов.` },
 { id: "signs", icon: "🚩", title: "Признаки мошенничества", keywords: "признаки мошенничества как распознать обман красные флаги спешка",
-body: <b>Красные флаги мошенничества</b>\n\n• <b>Спешка и давление:</b> «решайте сейчас», «аккаунт заблокируют».\n• <b>Слишком выгодное предложение:</b> бонусы, лёгкий заработок, розыгрыши.\n• <b>Просьба о кодах, паролях, данных карты.</b>\n• <b>Оплата вне площадки</b> или на карту частного лица.\n• <b>Ссылка с «почти правильным» адресом</b> или сокращённая ссылка.\n• <b>Запрет рассказывать</b> близким и в банке.\n• <b>Звонок «из банка» или «из полиции»</b> с просьбой перевести деньги на «безопасный счёт».\n\nПри любом из этих признаков остановитесь и проверьте информацию по официальным каналам. },
+body: `<b>Красные флаги мошенничества</b>\n\n• <b>Спешка и давление:</b> «решайте сейчас», «аккаунт заблокируют».\n• <b>Слишком выгодное предложение:</b> бонусы, лёгкий заработок, розыгрыши.\n• <b>Просьба о кодах, паролях, данных карты.</b>\n• <b>Оплата вне площадки</b> или на карту частного лица.\n• <b>Ссылка с «почти правильным» адресом</b> или сокращённая ссылка.\n• <b>Запрет рассказывать</b> близким и в банке.\n• <b>Звонок «из банка» или «из полиции»</b> с просьбой перевести деньги на «безопасный счёт».\n\nПри любом из этих признаков остановитесь и проверьте информацию по официальным каналам.` },
 ];
-export const esc = (s) => String(s ?? "").replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
+export const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 export function shuffle(arr, rnd = Math.random) {
-const a = [...arr];
-for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-return a;
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
 }
+
 export function chunkText(text, max = 3800) {
-if (text.length <= max) return [text];
-const out = [];
-let cur = "";
-for (const line of text.split("\n")) {
-if ((cur + "\n" + line).length > max) { if (cur) out.push(cur); cur = line.slice(0, max); }
-else cur = cur ? cur + "\n" + line : line;
+  if (text.length <= max) return [text];
+  const out = [];
+  let cur = "";
+  for (let line of text.split("\n")) {
+    while (line.length > max) {
+      if (cur) { out.push(cur); cur = ""; }
+      out.push(line.slice(0, max));
+      line = line.slice(max);
+    }
+    if (cur && (cur + "\n" + line).length > max) { out.push(cur); cur = line; }
+    else cur = cur ? cur + "\n" + line : line;
+  }
+  if (cur) out.push(cur);
+  return out;
 }
-if (cur) out.push(cur);
-return out;
-}
+
 export function ago(ts, now = Date.now()) {
-const m = Math.max(0, Math.floor((now - ts) / 60000));
-if (m < 1) return "только что";
-if (m < 60) return ${m} мин назад;
-const h = Math.floor(m / 60);
-if (h < 24) return ${h} ч назад;
-return ${Math.floor(h / 24)} дн назад;
+  const m = Math.max(0, Math.floor((now - ts) / 60000));
+  if (m < 1) return "только что";
+  if (m < 60) return `${m} мин назад`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h} ч назад`;
+  return `${Math.floor(h / 24)} дн назад`;
 }
+
 export function fmtDate(ts) {
-try { return new Date(ts).toLocaleString("ru-RU", { timeZone: "Europe/Kyiv", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }); }
-catch { return new Date(ts).toISOString(); }
+  try { return new Date(ts).toLocaleString("ru-RU", { timeZone: "Europe/Kyiv", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }); }
+  catch { return new Date(ts).toISOString(); }
 }
-export const ticketCode = (n) => BD-${String(n).padStart(4, "0")};
-export const defang = (u) => String(u).replace(/^http/i, "hxxp").replace(/./g, "[.]");
+
+export const ticketCode = (n) => `BD-${String(n).padStart(4, "0")}`;
+export const defang = (u) => String(u).replace(/^http/i, "hxxp").replace(/\./g, "[.]");
+
 function luhn(d) {
-let sum = 0, alt = false;
-for (let i = d.length - 1; i >= 0; i--) { let n = d.charCodeAt(i) - 48; if (alt) { n *= 2; if (n > 9) n -= 9; } sum += n; alt = !alt; }
-return sum % 10 === 0;
+  let sum = 0, alt = false;
+  for (let i = d.length - 1; i >= 0; i--) { let n = d.charCodeAt(i) - 48; if (alt) { n *= 2; if (n > 9) n -= 9; } sum += n; alt = !alt; }
+  return sum % 10 === 0;
 }
+
 export function redact(text) {
-const found = new Set();
-let out = String(text ?? "");
-out = out.replace(/\b(?:\d[ -]?){13,19}\b/g, (m) => {
-const d = m.replace(/\D/g, "");
-if (d.length >= 13 && d.length <= 19 && luhn(d)) { found.add("номер карты"); return "[номер карты скрыт]"; }
-return m;
-});
-out = out.replace(/(?<![\p{L}\d])(cvv2?|cvc2?|цвв)\s*[:=-]?\s*\d{3,4}(?!\d)/giu, () => { found.add("CVV"); return "[CVV скрыт]"; });
-out = out.replace(/(?<![\p{L}\d])(парол[ьяю]?|password|passwd|pass|pin|пин(?:-код)?)\s*[:=-]\s*\S+/giu, (m, w) => { found.add("пароль"); return ${w}: [скрыто]; });
-out = out.replace(/\b(?:[a-z]{3,8}\s+){11,}[a-z]{3,8}\b/g, () => { found.add("сид-фраза"); return "[возможная сид-фраза скрыта]"; });
-return { text: out, found: [...found] };
+  const found = new Set();
+  let out = String(text ?? "");
+  out = out.replace(/\b(?:\d[ -]?){13,19}\b/g, (m) => {
+    const d = m.replace(/\D/g, "");
+    if (d.length >= 13 && d.length <= 19 && luhn(d)) { found.add("номер карты"); return "[номер карты скрыт]"; }
+    return m;
+  });
+  out = out.replace(/(?<![\p{L}\d])(cvv2?|cvc2?|цвв)\s*[:=-]?\s*\d{3,4}(?!\d)/giu, () => { found.add("CVV"); return "[CVV скрыт]"; });
+  out = out.replace(/(?<![\p{L}\d])(парол[ьяю]?|password|passwd|pass|pin|пин(?:-код)?)\s*[:=-]\s*\S+/giu, (m, w) => { found.add("пароль"); return `${w}: [скрыто]`; });
+  out = out.replace(/\b(?:[a-z]{3,8}\s+){11,}[a-z]{3,8}\b/g, () => { found.add("сид-фраза"); return "[возможная сид-фраза скрыта]"; });
+  return { text: out, found: [...found] };
 }
+
+const RANK_KEY = { 1: "low", 2: "mid", 3: "high" };
+
 export function suggestPriority(category, text) {
-const reasons = [];
-let rank = 1;
-const bump = (r, why) => { if (r > rank) rank = r; reasons.push(why); };
-const t = String(text ?? "").toLowerCase();
-if (["extortion", "theft"].includes(category)) bump(3, "тип обращения: шантаж или кража денег");
-else if (["hacked", "malware", "doxxing", "harassment"].includes(category)) bump(2, "тип обращения: взлом, вирус, утечка данных или травля");
-if (/(угрожа|убь[юе]|убийств|расправ|оружи|ножом|найд[уё]м)/.test(t)) bump(3, "в описании есть угрозы безопасности");
-if (/(шантаж|вымога|выкуп|опубликуем|разошл[её]м|разошлю)/.test(t)) bump(3, "в описании шантаж или требование выкупа");
-if (/(прямо сейчас|продолжается|списыва|снимают|выводят|не могу остановить)/.test(t)) bump(3, "ситуация продолжается");
-if (/(ребён|ребен|несовершеннолет|школьн|\b1[0-7]\sлет)/.test(t)) bump(3, "возможно затронуты дети");
-const money = t.match(/(\d[\d\s]{2,})\s(грн|uah|₴|$|usd|долл|eur|евро|usdt)/);
-if (money) {
-const sum = parseInt(money[1].replace(/\s/g, ""), 10);
-bump(sum >= 1000 ? 3 : 2, названа сумма: ${sum} ${money[2]});
+  const reasons = [];
+  let rank = 1;
+  const bump = (r, why) => { if (r > rank) rank = r; reasons.push(why); };
+  const t = String(text ?? "").toLowerCase();
+  if (["extortion", "theft"].includes(category)) bump(3, "тип обращения: шантаж или кража денег");
+  else if (["hacked", "malware", "doxxing", "harassment"].includes(category)) bump(2, "тип обращения: взлом, вирус, утечка данных или травля");
+  if (/(угрожа|убь[юе]|убийств|расправ|оружи|ножом|найд[уё]м)/.test(t)) bump(3, "в описании есть угрозы безопасности");
+  if (/(шантаж|вымога|выкуп|опубликуем|разошл[её]м|разошлю)/.test(t)) bump(3, "в описании шантаж или требование выкупа");
+  if (/(прямо сейчас|продолжается|списыва|снимают|выводят|не могу остановить)/.test(t)) bump(3, "ситуация продолжается");
+  if (/(ребён|ребен|несовершеннолет|школьн|\b1[0-7]\s?лет)/.test(t)) bump(3, "возможно затронуты дети");
+  const money = t.match(/(\d[\d\s]*)\s*(грн|uah|₴|\$|usd|долл|eur|евро|usdt)/);
+  if (money) {
+    const sum = parseInt(money[1].replace(/\s/g, ""), 10);
+    if (Number.isFinite(sum)) bump(sum >= 1000 ? 3 : 2, `названа сумма: ${sum} ${money[2]}`);
+  }
+  return { rank, key: RANK_KEY[rank], reasons };
 }
-return { rank, key: RANK_KEY[rank], reasons };
-}
+
 export function createDb(dir) {
-const file = path.join(dir, "db.json");
-let db = { users: {}, tickets: [], apps: [], counters: { ticket: 0, app: 0 } };
-try {
-fs.mkdirSync(dir, { recursive: true });
-if (fs.existsSync(file)) {
-const loaded = JSON.parse(fs.readFileSync(file, "utf8"));
-db = { ...db, ...loaded, counters: { ...db.counters, ...(loaded.counters ?? {}) } };
+  const file = path.join(dir, "db.json");
+  let db = { users: {}, tickets: [], apps: [], counters: { ticket: 0, app: 0 } };
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    if (fs.existsSync(file)) {
+      const loaded = JSON.parse(fs.readFileSync(file, "utf8"));
+      db = { ...db, ...loaded, counters: { ...db.counters, ...(loaded.counters ?? {}) } };
+    }
+  } catch (e) {
+    try { fs.copyFileSync(file, `${file}.broken-${Date.now()}`); } catch {}
+    console.error("db.json повреждён, создана копия:", e.message);
+  }
+  let timer = null, pending = false;
+  const flush = () => {
+    if (timer) { clearTimeout(timer); timer = null; }
+    if (!pending) return;
+    try {
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(file + ".tmp", JSON.stringify(db));
+      fs.renameSync(file + ".tmp", file);
+      pending = false;
+    } catch (e) { console.error("не удалось сохранить db.json:", e.message); }
+  };
+  const save = () => { pending = true; if (!timer) { timer = setTimeout(flush, 400); timer.unref?.(); } };
+  return { data: db, save, flush };
 }
-} catch (e) {
-try { fs.copyFileSync(file, ${file}.broken-${Date.now()}); } catch {}
-console.error("db.json повреждён, создана копия:", e.message);
-}
-let timer = null;
-const flush = () => {
-if (timer) { clearTimeout(timer); timer = null; }
-try { fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(file + ".tmp", JSON.stringify(db)); fs.renameSync(file + ".tmp", file); }
-catch (e) { console.error("не удалось сохранить db.json:", e.message); }
-};
-const save = () => { if (!timer) { timer = setTimeout(flush, 400); timer.unref?.(); } };
-return { data: db, save, flush };
-}
+
 export async function createSupabaseDb({ url, key, fetchImpl = fetch, table = "bot_state" }) {
-const base = ${url.replace(/\/$/, "")}/rest/v1/${table};
-const headers = {
-apikey: key,
-Authorization: Bearer ${key},
-"Content-Type": "application/json",
-Prefer: "return=representation"
-};
-let db = { users: {}, tickets: [], apps: [], counters: { ticket: 0, app: 0 } };
-const res = await fetchImpl(${base}?id=eq.1&select=data, { headers });
-if (!res.ok) throw new Error(Supabase: не удалось прочитать данные (HTTP ${res.status}). Проверьте SUPABASE_URL, SUPABASE_KEY и создание таблицы.);
-const rows = await res.json();
-const loaded = rows?.[0]?.data;
-if (loaded && typeof loaded === "object") db = { ...db, ...loaded, counters: { ...db.counters, ...(loaded.counters ?? {}) } };
-let timer = null, writing = null, dirty = false;
-const write = async () => {
-if (writing) { dirty = true; return writing; }
-do {
-dirty = false;
-writing = (async () => {
-try {
-const r = await fetchImpl(${base}?on_conflict=id, {
-method: "POST",
-headers: { ...headers, Prefer: "resolution=merge-duplicates,return=minimal" },
-body: JSON.stringify({ id: 1, data: db, updated_at: new Date().toISOString() }),
-});
-if (!r.ok) console.error("Supabase: ошибка сохранения", r.status, (await r.text()).slice(0, 200));
-} catch (e) { console.error("Supabase: ошибка сохранения:", e.message); }
-})();
-await writing;
-writing = null;
-} while (dirty);
-};
-const flush = () => { if (timer) { clearTimeout(timer); timer = null; } return write(); };
-const save = () => { if (!timer) { timer = setTimeout(flush, 1000); timer.unref?.(); } };
-return { data: db, save, flush };
+  const base = `${url.replace(/\/$/, "")}/rest/v1/${table}`;
+  const headers = {
+    apikey: key,
+    Authorization: `Bearer ${key}`,
+    "Content-Type": "application/json",
+  };
+  let db = { users: {}, tickets: [], apps: [], counters: { ticket: 0, app: 0 } };
+  const res = await fetchImpl(`${base}?id=eq.1&select=data`, { headers });
+  if (!res.ok) throw new Error(`Supabase: не удалось прочитать данные (HTTP ${res.status}). Проверьте SUPABASE_URL, SUPABASE_KEY и создание таблицы.`);
+  const rows = await res.json();
+  const loaded = rows?.[0]?.data;
+  if (loaded && typeof loaded === "object") db = { ...db, ...loaded, counters: { ...db.counters, ...(loaded.counters ?? {}) } };
+  let timer = null, writing = null, dirty = false, pending = false;
+  const write = async () => {
+    if (writing) { dirty = true; return writing; }
+    do {
+      dirty = false;
+      pending = false;
+      writing = (async () => {
+        try {
+          const r = await fetchImpl(`${base}?on_conflict=id`, {
+            method: "POST",
+            headers: { ...headers, Prefer: "resolution=merge-duplicates,return=minimal" },
+            body: JSON.stringify({ id: 1, data: db, updated_at: new Date().toISOString() }),
+          });
+          if (!r.ok) { pending = true; console.error("Supabase: ошибка сохранения", r.status, (await r.text()).slice(0, 200)); }
+        } catch (e) { pending = true; console.error("Supabase: ошибка сохранения:", e.message); }
+      })();
+      await writing;
+      writing = null;
+    } while (dirty);
+  };
+  const flush = () => { if (timer) { clearTimeout(timer); timer = null; } return pending ? write() : Promise.resolve(); };
+  const save = () => { pending = true; if (!timer) { timer = setTimeout(flush, 1000); timer.unref?.(); } };
+  return { data: db, save, flush };
 }
- const SHORTENERS = new Set(["bit.ly", "t.co", "tinyurl.com", "cutt.ly", "is.gd", "goo.gl", "ow.ly", "rebrand.ly", "clck.ru", "vk.cc", "tiny.cc", "shorturl.at"]);
+
+const SHORTENERS = new Set(["bit.ly", "t.co", "tinyurl.com", "cutt.ly", "is.gd", "goo.gl", "ow.ly", "rebrand.ly", "clck.ru", "vk.cc", "tiny.cc", "shorturl.at"]);
 const SUSP_TLD = new Set(["zip", "mov", "top", "xyz", "click", "link", "gq", "tk", "ml", "ga", "cf", "work", "rest", "country", "loan", "icu", "monster", "buzz", "cfd", "sbs"]);
 const BRANDS = ["paypal", "google", "facebook", "instagram", "telegram", "whatsapp", "apple", "microsoft", "amazon", "netflix", "binance", "coinbase", "metamask", "privatbank", "monobank", "novaposhta", "ukrposhta", "kyivstar", "vodafone", "olx", "diia", "steam", "discord"];
 const WORDS = ["login", "signin", "verify", "secure", "account", "update", "wallet", "airdrop", "bonus", "gift", "prize", "claim", "confirm", "recovery", "support", "refund", "payment"];
 const MULTI = new Set(["co.uk", "com.ua", "org.ua", "net.ua", "kiev.ua", "in.ua", "com.br", "co.jp", "com.au", "co.in"]);
+
+function regDomain(host) {
+  const p = host.split(".");
+  if (p.length <= 2) return host;
+  const last2 = p.slice(-2).join(".");
+  return MULTI.has(last2) ? p.slice(-3).join(".") : last2;
+}
+
+function extractUrl(input) {
+  const s = String(input ?? "");
+  let m = s.match(/https?:\/\/[^\s<>"'«»]+/i);
+  if (!m) m = s.match(/\b(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s<>"'«»]*)?/i);
+  if (!m) return null;
+  let u = m[0].replace(/[).,;:!?]+$/, "");
+  if (!/^https?:\/\//i.test(u)) u = "http://" + u;
+  return u;
+}
+
+function heuristics(url) {
+  let u;
+  try { u = new URL(url); } catch { return { ok: false, error: "Не удалось разобрать ссылку." }; }
+  if (!/^https?:$/.test(u.protocol)) return { ok: false, error: "Поддерживаются только ссылки http и https." };
+  const host = u.hostname.replace(/^\[|\]$/g, "").toLowerCase().replace(/\.$/, "");
+  const reasons = [];
+  let score = 0;
+  const isIp = net.isIP(host) > 0;
+  const reg = isIp ? host : regDomain(host);
+  const sld = reg.split(".")[0];
+  const tld = reg.split(".").pop();
+  if (isIp) { score += 3; reasons.push("вместо домена указан IP-адрес"); }
+  if (SHORTENERS.has(reg)) { score += 2; reasons.push("сокращённая ссылка скрывает настоящий адрес"); }
+  if (!isIp && SUSP_TLD.has(tld)) { score += 2; reasons.push(`подозрительная доменная зона .${tld}`); }
+  if (host.includes("xn--")) { score += 3; reasons.push("домен в punycode (возможна подмена символов)"); }
+  if (u.username || u.password) { score += 3; reasons.push("в адресе есть логин или пароль перед символом @"); }
+  if (u.protocol === "http:") { score += 1; reasons.push("нет защищённого соединения (https)"); }
+  if (host.split(".").length > 4) { score += 1; reasons.push("слишком много поддоменов"); }
+  if (!isIp) {
+    const norm = sld.replace(/0/g, "o").replace(/1/g, "l").replace(/3/g, "e").replace(/5/g, "s");
+    const brand = BRANDS.find((b) => sld !== b && (host.includes(b) || norm.includes(b)));
+    if (brand) { score += 4; reasons.push(`в адресе имитируется бренд «${brand}», но сайт ему не принадлежит`); }
+    const hits = WORDS.filter((w) => host.includes(w));
+    if (hits.length) { score += Math.min(hits.length, 2); reasons.push(`в адресе слова, характерные для фишинга: ${hits.join(", ")}`); }
+    if ((sld.match(/-/g) ?? []).length >= 2) { score += 1; reasons.push("много дефисов в названии домена"); }
+  }
+  return { ok: true, host, reg, score, reasons };
+}
+
+function isPrivateIp(ip) {
+  const v = net.isIP(ip);
+  if (v === 4) {
+    const [a, b] = ip.split(".").map(Number);
+    return a === 0 || a === 10 || a === 127 || (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254) ||
+      (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 192 && b === 0) || (a === 198 && (b === 18 || b === 19)) || a >= 224;
+  }
+  if (v === 6) {
+    const x = ip.toLowerCase();
+    if (x === "::" || x === "::1") return true;
+    if (x.startsWith("::ffff:")) {
+      const m = x.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/);
+      return m ? isPrivateIp(m[1]) : true;
+    }
+    return /^f[cd][0-9a-f]{2}:/.test(x) || /^fe[89ab][0-9a-f]:/.test(x) || x.startsWith("ff");
+  }
+  return true;
+}
+
+async function isPublicHost(host, lookup) {
+  const h = String(host).replace(/^\[|\]$/g, "");
+  if (net.isIP(h)) return !isPrivateIp(h);
+  if (!h || h === "localhost" || h.endsWith(".localhost") || h.endsWith(".local") || h.endsWith(".internal")) return false;
+  try {
+    const res = await lookup(h, { all: true });
+    const list = Array.isArray(res) ? res : [res];
+    return list.length > 0 && list.every((r) => !isPrivateIp(r.address));
+  } catch { return false; }
+}
 
 export async function checkLink(input, deps = {}) {
   const fetchImpl = deps.fetchImpl ?? fetch;
@@ -308,7 +407,7 @@ export async function checkLink(input, deps = {}) {
   const url = extractUrl(input);
   if (!url || url.length > 2000) return { error: "Не нашёл ссылку в сообщении. Пришлите адрес целиком, например https://example.com" };
   const first = heuristics(url);
-  if (!first.ok) return { error: first.reasons };
+  if (!first.ok) return { error: first.error };
   let score = first.score;
   const reasons = [...first.reasons];
   const hops = [];
@@ -325,7 +424,7 @@ export async function checkLink(input, deps = {}) {
       const loc = res.headers.get("location");
       hops.push({ url: cur, status: res.status });
       finalUrl = cur;
-      if (res.status >= 300 && res.status < 400 && loc) { cur = new URL(loc, cur).toString(); continue; }
+      if (res.status >= 300 && res.status < 400 && loc) { cur = new URL(loc, cur).toString(); finalUrl = cur; continue; }
       break;
     } catch { skipped = "сайт не ответил за 6 секунд"; break; }
   }
@@ -335,15 +434,17 @@ export async function checkLink(input, deps = {}) {
     const fin = heuristics(finalUrl);
     if (fin.ok) {
       host = fin.host; reg = fin.reg;
-      if (fin.reg !== first.reg) { score += 1; reasons.push(`ссылка ведёт на другой сайт: ${defang(fin.host)}`); }
-      for (const r of fin.reasons) if (!reasons.includes(r)) reasons.push("конечный адрес: " + r);
-      score += fin.score;
+      if (fin.reg !== first.reg) {
+        score += 1 + fin.score;
+        reasons.push(`ссылка ведёт на другой сайт: ${defang(fin.host)}`);
+        for (const r of fin.reasons) reasons.push("конечный адрес: " + r);
+      }
     }
   }
   let ageDays = null;
   try {
     if (!net.isIP(host)) {
-      const r = await fetchImpl(`https://rdap.org{reg}`, { signal: AbortSignal.timeout(6000), headers: { Accept: "application/rdap+json" } });
+      const r = await fetchImpl(`https://rdap.org/domain/${reg}`, { signal: AbortSignal.timeout(6000), headers: { Accept: "application/rdap+json" } });
       if (r.ok) {
         const d = await r.json();
         const ev = (d.events ?? []).find((e) => e.eventAction === "registration");
@@ -372,9 +473,9 @@ export async function checkLink(input, deps = {}) {
 async function vtLookup(url, key, fetchImpl, sleepFn) {
   const headers = { "x-apikey": key };
   const id = Buffer.from(url).toString("base64url");
-  let r = await fetchImpl(`https://virustotal.com{id}`, { headers, signal: AbortSignal.timeout(8000) });
+  const r = await fetchImpl(`https://www.virustotal.com/api/v3/urls/${id}`, { headers, signal: AbortSignal.timeout(8000) });
   if (r.status === 404) {
-    const sub = await fetchImpl("https://virustotal.com", {
+    const sub = await fetchImpl("https://www.virustotal.com/api/v3/urls", {
       method: "POST", headers: { ...headers, "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ url }).toString(), signal: AbortSignal.timeout(8000),
     });
@@ -382,7 +483,7 @@ async function vtLookup(url, key, fetchImpl, sleepFn) {
     if (!aid) return null;
     for (let i = 0; i < 3; i++) {
       await sleepFn(4000);
-      const a = await fetchImpl(`https://virustotal.com{aid}`, { headers, signal: AbortSignal.timeout(8000) });
+      const a = await fetchImpl(`https://www.virustotal.com/api/v3/analyses/${aid}`, { headers, signal: AbortSignal.timeout(8000) });
       const j = await a.json();
       if (j?.data?.attributes?.status === "completed") return j.data.attributes.stats;
     }
@@ -429,6 +530,15 @@ const STATUS = { new: "🆕 Новая", work: "🔧 В работе", info: "�
 const isOpen = (t) => ["new", "work", "info"].includes(t.status);
 const DAY = 86400000;
 const LETTERS = ["A", "B", "C", "D"];
+const VERDICTS = { high: "🔴 Высокий риск", mid: "🟠 Средний риск", low: "🟢 Низкий риск (но это не гарантия безопасности)" };
+
+const specText = "<b>Шаг 2 из 4. Специализация</b>\n\nВыберите одно или несколько направлений и нажмите «Готово». Можно добавить своё.";
+const SPEC_ROWS = (sel = []) => [
+  ...SPECS.map((s, i) => [btn(`${sel.includes(i) ? "✅ " : ""}${s}`, `spec_${i}`)]),
+  [btn("✍️ Другое", "spec_other")],
+  [btn("➡️ Готово", "spec_done")],
+  BACK,
+];
 
 export function buildBot(bot, deps) {
   const { cfg, store } = deps;
@@ -441,10 +551,10 @@ export function buildBot(bot, deps) {
 
   const getUser = (from) => {
     let u = db.users[from.id];
-    if (!u) u = db.users[from.id] = { id: from.id, state: "idle", step: 0, data: {}, role: "user", createdAt: now(), stamps: { ai: [], link: [], msg: [] } };
+    if (!u) u = db.users[from.id] = { id: from.id, state: "idle", step: 0, data: {}, role: "user", createdAt: now() };
     u.username = from.username ?? null;
     u.name = [from.first_name, from.last_name].filter(Boolean).join(" ");
-    u.stamps ??= { ai: [], link: [], msg: [] };
+    u.stamps = { ai: [], link: [], msg: [], ...(u.stamps ?? {}) };
     return u;
   };
   const reset = (u) => { u.state = "idle"; u.step = 0; u.data = {}; store.save(); };
@@ -456,7 +566,9 @@ export function buildBot(bot, deps) {
   const notify = (userId, text, rows) => tg.sendMessage(userId, text, extra(rows)).catch((e) => console.error("notify failed:", userId, e.message));
   const toAdmin = (text, rows) => tg.sendMessage(adminChat, text, extra(rows));
   const isAdminChat = (ctx) => !!adminChat && String(ctx.chat?.id) === adminChat;
-  const recent = (arr, ms) => { const t = now(); const r = arr.filter((x) => t - x < ms); r.push(t); return r; };
+  const recent = (arr, ms) => { const t = now(); const r = (arr ?? []).filter((x) => t - x < ms); r.push(t); return r; };
+  const ticketOf = (n) => db.tickets.find((t) => t.num === Number(n));
+  const logTicket = (t, text) => { t.updatedAt = now(); t.log.push({ ts: now(), text }); };
 
   bot.use(async (ctx, next) => {
     if (!ctx.from || ctx.from.is_bot) return;
@@ -484,362 +596,448 @@ export function buildBot(bot, deps) {
     reset(u);
     const send = viaButton ? edit : say;
     if (u.role === "defender") {
-Используйте код с осторожностью.
-return send(ctx, "🛡️ Вы уже в команде защитников.\n\nСпасибо, что помогаете людям! Администраторы свяжутся с вами через бота, когда понадобится помощь.", [[btn("📄 Моя анкета", "join_profile")], BACK]);
+      return send(ctx, "🛡️ Вы уже в команде защитников.\n\nСпасибо, что помогаете людям! Администраторы свяжутся с вами через бота, когда понадобится помощь.", [[btn("📄 Моя анкета", "join_profile")], BACK]);
+    }
+    const app = lastApp(u);
+    if (app?.status === "pending") return send(ctx, "⏳ Ваша заявка на рассмотрении.\nМы сообщим о решении в этом чате.", [BACK]);
+    if (app?.status === "rejected" && now() - app.decidedAt < 3 * DAY) {
+      const left = Math.ceil((3 * DAY - (now() - app.decidedAt)) / 3600000);
+      return send(ctx, `Заявка была отклонена${app.reason ? `: ${esc(app.reason)}` : "."}\nПодать новую можно через ${left} ч.`, [BACK]);
+    }
+    return send(ctx, RULES, [[btn("✅ Согласен(а), продолжить", "join_accept")], BACK]);
+  }
+  bot.command("join", (ctx) => joinHome(ctx, false));
+  bot.action("cmd_join", (ctx) => joinHome(ctx, true));
+  bot.action("join_profile", async (ctx) => {
+    const app = [...db.apps].reverse().find((a) => a.userId === ctx.from.id && a.status === "accepted");
+    return edit(ctx, app ? appText(app, false) : "Анкета не найдена.", [BACK]);
+  });
+  bot.action("join_accept", async (ctx) => {
+    const u = ctx.state.u;
+    if (!adminChat) return edit(ctx, "Приём заявок пока не настроен: администраторы не подключены. Попробуйте позже.", [BACK]);
+    u.state = "join_name"; u.step = 1; u.data = { resume: {} }; store.save();
+    return edit(ctx, "Шаг 1 из 4. Резюме\n\nКак к вам обращаться? Напишите имя или псевдоним.", [BACK]);
+  });
+  bot.action(/^spec_(\d+)$/, async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "join_spec") return;
+    const i = Number(ctx.match[1]);
+    if (!SPECS[i]) return;
+    const sel = (u.data.sel ??= []);
+    const at = sel.indexOf(i);
+    if (at >= 0) sel.splice(at, 1); else sel.push(i);
+    store.save();
+    return edit(ctx, specText, SPEC_ROWS(sel));
+  });
+  bot.action("spec_other", async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "join_spec") return;
+    u.state = "join_spec_other"; store.save();
+    return say(ctx, "Напишите свою специализацию (до 80 символов):", [BACK]);
+  });
+  bot.action("spec_done", async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "join_spec") return;
+    const specs = [...[...(u.data.sel ?? [])].sort((a, b) => a - b).map((i) => SPECS[i]), ...(u.data.custom ?? [])];
+    if (!specs.length) return ctx.answerCbQuery("Выберите хотя бы одну специализацию", { show_alert: true }).catch(() => {});
+    u.data.resume.specs = specs;
+    u.state = "join_test_intro"; u.step = 3; store.save();
+    return edit(ctx, `<b>Шаг 3 из 4. Тест по OSINT</b>\n\n${QUESTIONS.length} вопросов с вариантами ответов. Время не ограничено, но пройти тест можно только один раз за заявку.`, [[btn("🧪 Начать тест", "test_start")], BACK]);
+  });
+
+  async function sendQuestion(ctx) {
+    const u = ctx.state.u;
+    const t = u.data.test;
+    const q = QUESTIONS[t.pos];
+    const order = t.order[t.pos];
+    const lines = order.map((orig, k) => `<b>${LETTERS[k]}.</b> ${esc(q.options[orig])}`).join("\n\n");
+    const text = `<b>Вопрос ${t.pos + 1} из ${QUESTIONS.length}</b> · ${esc(q.topic)}\n\n${esc(q.q)}\n\n${lines}`;
+    const rows = [order.map((_, k) => btn(LETTERS[k], `ans_${t.pos}_${k}`)), BACK];
+    return edit(ctx, text, rows);
+  }
+  bot.action("test_start", async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "join_test_intro") return;
+    u.state = "join_test";
+    u.data.test = { pos: 0, answers: [], order: QUESTIONS.map((q) => shuffle(q.options.map((_, i) => i))) };
+    store.save();
+    return sendQuestion(ctx);
+  });
+  bot.action(/^ans_(\d+)_(\d)$/, async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "join_test") return;
+    const t = u.data.test;
+    const pos = Number(ctx.match[1]);
+    const k = Number(ctx.match[2]);
+    if (pos !== t.pos || k > 3) return;
+    t.answers.push(t.order[pos][k] === 0);
+    t.pos += 1;
+    store.save();
+    if (t.pos < QUESTIONS.length) return sendQuestion(ctx);
+    return finishTest(ctx);
+  });
+  async function finishTest(ctx) {
+    const u = ctx.state.u;
+    const t = u.data.test;
+    const score = t.answers.filter(Boolean).length;
+    const total = QUESTIONS.length;
+    const pct = Math.round((score / total) * 100);
+    const verdict = pct >= 75 ? "Отличный результат" : pct >= 50 ? "Неплохо, есть что подтянуть" : "Нужно подтянуть основы";
+    u.data.resume.score = score; u.data.resume.total = total; u.data.resume.pct = pct;
+    const missed = t.answers.map((ok, i) => (ok ? null : i)).filter((i) => i !== null);
+    await edit(ctx, `<b>Тест завершён</b>\n\nРезультат: <b>${score} из ${total} (${pct}%)</b>\n${verdict}.`, null);
+    if (missed.length) {
+      const review = missed.map((i) => {
+        const q = QUESTIONS[i];
+        return `<b>${i + 1}. ${esc(q.topic)}</b>\nВерно: ${esc(q.options[0])}\n<i>${esc(q.explain)}</i>`;
+      }).join("\n\n");
+      for (const part of chunkText(`<b>Разбор ошибок</b>\n\n${review}`)) await say(ctx, part);
+    }
+    submitApplication(u);
+    u.state = "join_done"; u.step = 4; store.save();
+    return say(ctx, "Шаг 4 из 4. Заявка отправлена. Мы сообщим о решении в этом чате.", [BACK]);
+  }
+  function appText(app, forAdmin = true) {
+    const r = app;
+    const who = forAdmin ? ` (${r.username ? "@" + esc(r.username) : "без username"}, id ${r.userId})` : "";
+    const st = r.status !== "pending" && forAdmin ? `\n\nСтатус: ${r.status === "accepted" ? "✅ принят(а)" : "❌ отклонён(а)"}` : "";
+    return `<b>🛡️ Заявка в защитники #${r.id}</b>\n\n` +
+      `👤 <b>${esc(r.resumeName)}</b>${who}\n` +
+      `🎂 Возраст: ${esc(r.age)}\n` +
+      `🧭 Специализация: ${esc((r.specs ?? []).join(", "))}\n` +
+      `💼 Опыт: ${esc(r.exp)}\n` +
+      `🧪 Тест: <b>${r.score} из ${r.total} (${r.pct}%)</b>` + st;
+  }
+  function submitApplication(u) {
+    const r = u.data.resume;
+    db.counters.app += 1;
+    const app = {
+      id: db.counters.app, userId: u.id, username: u.username, resumeName: r.name, age: r.age, exp: r.exp, specs: r.specs,
+      score: r.score, total: r.total, pct: r.pct, status: "pending", createdAt: now(),
+    };
+    db.apps.push(app);
+    store.save();
+    toAdmin(appText(app), [[btn("✅ Принять", `app_ok_${app.id}`), btn("❌ Отклонить", `app_no_${app.id}`)]])
+      .then((m) => { app.adminMsgId = m.message_id; store.save(); })
+      .catch((e) => console.error("не удалось отправить заявку в админ-чат:", e.message));
+    return app;
+  }
+  bot.action(/^app_(ok|no)_(\d+)$/, async (ctx) => {
+    if (!isAdminChat(ctx)) return ctx.answerCbQuery("Нет доступа", { show_alert: true }).catch(() => {});
+    const app = db.apps.find((a) => a.id === Number(ctx.match[2]));
+    if (!app) return ctx.answerCbQuery("Заявка не найдена", { show_alert: true }).catch(() => {});
+    if (app.status !== "pending") return ctx.answerCbQuery("Решение уже принято", { show_alert: true }).catch(() => {});
+    const ok = ctx.match[1] === "ok";
+    app.status = ok ? "accepted" : "rejected";
+    app.decidedAt = now();
+    app.decidedBy = ctx.from.username ?? String(ctx.from.id);
+    const cand = db.users[app.userId];
+    if (ok && cand) cand.role = "defender";
+    store.save();
+    await ctx.answerCbQuery(ok ? "Принято" : "Отклонено").catch(() => {});
+    await edit(ctx, appText(app) + `\n\nРешение: ${ok ? "✅" : "❌"} ${esc(app.decidedBy)}`, null);
+    notify(app.userId, ok ? "🎉 Вы приняты в команду защитников!" : "Заявка отклонена.", [BACK]);
+  });
+
+  const openTickets = (u) => db.tickets.filter((t) => t.userId === u.id && isOpen(t));
+  async function reportHome(ctx, viaButton) {
+    const u = ctx.state.u;
+    reset(u);
+    const send = viaButton ? edit : say;
+    if (openTickets(u).length >= 3) return send(ctx, "У вас уже 3 открытые заявки.", [[btn("📊 Статус заявки", "cmd_status")], BACK]);
+    u.state = "report_prio"; u.step = 1; u.data = {}; store.save();
+    const lines = Object.values(PRIORITIES).map((p) => `${p.icon} <b>${p.name}</b>: ${p.hint}`).join("\n");
+    return send(ctx, `<b>🆘 Запрос помощи</b>\n\n${EMERGENCY}\n\n<b>Шаг 1 из 3. Насколько это срочно?</b>\n${lines}`, [[btn("🔥 Высокий", "prio_high")], [btn("⚠️ Средний", "prio_mid")], [btn("ℹ️ Низкий", "prio_low")], BACK]);
+  }
+  bot.command("report", (ctx) => reportHome(ctx, false));
+  bot.action("cmd_report", (ctx) => reportHome(ctx, true));
+  bot.action(/^prio_(high|mid|low)$/, async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "report_prio") return;
+    u.data.prio = ctx.match[1]; u.state = "report_cat"; store.save();
+    const keys = Object.keys(CATEGORIES);
+    const rows = [];
+    for (let i = 0; i < keys.length; i += 2) rows.push(keys.slice(i, i + 2).map((k) => btn(`${CATEGORIES[k].icon} ${CATEGORIES[k].label}`, `cat_${k}`)));
+    rows.push(BACK);
+    return edit(ctx, "Шаг 2 из 3. Что случилось?", rows);
+  });
+  bot.action(/^cat_(\w+)$/, async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "report_cat" || !CATEGORIES[ctx.match[1]]) return;
+    u.data.cat = ctx.match[1]; u.state = "report_desc"; u.data.evidence = []; store.save();
+    const c = CATEGORIES[u.data.cat];
+    return edit(ctx, `<b>Шаг 3 из 3. Опишите проблему</b>\n\n${c.prompt}`, [BACK]);
+  });
+  const evidenceRows = (n) => [[btn(n ? `✅ Готово (${n})` : "➡️ Пропустить", "rep_done")], BACK];
+  async function onDescription(ctx, text) {
+    const u = ctx.state.u;
+    if (text.length < 30) return say(ctx, "Опишите подробнее (от 30 символов).", [BACK]);
+    const r = redact(text.slice(0, 2500));
+    u.data.desc = r.text;
+    u.state = "report_evidence"; store.save();
+    const note = r.found.length ? `\nДля вашей безопасности я скрыл в тексте: ${r.found.join(", ")}.` : "";
+    return say(ctx, `Принято.${note}\nМожете прислать вложения (скриншоты, файлы), затем нажмите «Готово».`, evidenceRows(0));
+  }
+  bot.on(["photo", "document", "video", "voice", "video_note", "audio"], async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "report_evidence") return say(ctx, "Вложения принимаются на шаге создания заявки.", MENU);
+    if (u.data.evidence.length >= 10) return say(ctx, "Максимум 10 вложений. Нажмите «Готово».", evidenceRows(10));
+    u.data.evidence.push({ chat: ctx.chat.id, msg: ctx.message.message_id }); store.save();
+    return say(ctx, `Принято (${u.data.evidence.length}). Можно прислать ещё или нажать «Готово».`, evidenceRows(u.data.evidence.length));
+  });
+  const finalPriority = (d) => {
+    const sug = suggestPriority(d.cat, d.desc);
+    const raised = sug.rank > PRIORITIES[d.prio].rank;
+    return { key: raised ? sug.key : d.prio, raised, reasons: sug.reasons };
+  };
+  bot.action("rep_done", async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "report_evidence") return;
+    u.state = "report_confirm"; store.save();
+    const c = CATEGORIES[u.data.cat];
+    const fp = finalPriority(u.data);
+    const p = PRIORITIES[fp.key];
+    let text = `<b>Проверьте заявку</b>\n\n${c.icon} ${esc(c.label)}\nПриоритет: ${p.icon} <b>${p.name}</b>`;
+    if (fp.raised) text += `\n<i>Приоритет повышен автоматически: ${esc(fp.reasons.join("; "))}</i>`;
+    text += `\nВложений: ${u.data.evidence.length}\n\n${esc(u.data.desc)}`;
+    return edit(ctx, text, [[btn("📨 Отправить заявку", "rep_send")], BACK]);
+  });
+  const adminTicketText = (t) => {
+    const p = PRIORITIES[t.prio];
+    const c = CATEGORIES[t.cat];
+    const who = t.username ? "@" + esc(t.username) : "без username";
+    return `<b>Заявка ${ticketCode(t.num)}</b> · ${STATUS[t.status]}\nПриоритет: ${p.icon} ${p.name}\nКатегория: ${esc(c.label)}\n👤 ${esc(t.name)} (${who}, id ${t.userId})\nВложений: ${t.evidenceCount}\n\nОписание: ${esc(t.desc)}`;
+  };
+  const adminTicketRows = (t) => [
+    [btn("🔧 Взять в работу", `tk_work_${t.num}`), btn("✅ Решено", `tk_done_${t.num}`)],
+    [btn("💬 Написать пользователю", `tk_reply_${t.num}`), btn("❌ Закрыть", `tk_close_${t.num}`)],
+  ];
+  bot.action("rep_send", async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "report_confirm") return;
+    const fp = finalPriority(u.data);
+    db.counters.ticket += 1;
+    const t = {
+      num: db.counters.ticket, userId: u.id, username: u.username, name: u.name,
+      prio: fp.key, chosen: u.data.prio, cat: u.data.cat, desc: u.data.desc,
+      evidenceCount: u.data.evidence.length, status: "new", createdAt: now(), updatedAt: now(),
+      assignee: null, firstResponseAt: null, log: [{ ts: now(), text: "Создана" }], msgs: [],
+    };
+    db.tickets.push(t);
+    const evidence = u.data.evidence;
+    reset(u);
+    try {
+      const m = await toAdmin(adminTicketText(t), adminTicketRows(t));
+      t.adminMsgId = m.message_id;
+      for (const e of evidence) await tg.copyMessage(adminChat, e.chat, e.msg).catch(() => {});
+    } catch (e) { console.error("не удалось отправить заявку в админ-чат:", e.message); }
+    store.save();
+    await edit(ctx, `✅ Заявка ${ticketCode(t.num)} создана. Мы свяжемся с вами в этом чате.`, [[btn("📊 Статус", "cmd_status")], BACK]);
+    const steps = FIRST_STEPS[t.cat] ?? FIRST_STEPS.other;
+    return say(ctx, `<b>Что сделать прямо сейчас</b>\n\n${steps.map((s, i) => `${i + 1}. ${esc(s)}`).join("\n")}`);
+  });
+  bot.action(/^tk_(work|done|close|reply)_(\d+)$/, async (ctx) => {
+    if (!isAdminChat(ctx)) return ctx.answerCbQuery("Нет доступа").catch(() => {});
+    const [, act, n] = ctx.match;
+    const t = ticketOf(n);
+    if (!t) return ctx.answerCbQuery("Не найдена").catch(() => {});
+    const who = ctx.from.username ? "@" + ctx.from.username : String(ctx.from.id);
+    if (act === "reply") {
+      if (!t.userId) return ctx.answerCbQuery("Пользователь удалил данные", { show_alert: true }).catch(() => {});
+      try {
+        await tg.sendMessage(ctx.from.id, `✍️ Напишите ответ по заявке <b>${ticketCode(t.num)}</b> (отмена: /cancel):`, extra());
+      } catch {
+        return ctx.answerCbQuery("Сначала откройте бота в личных сообщениях и нажмите /start", { show_alert: true }).catch(() => {});
+      }
+      const admin = ctx.state.u;
+      admin.state = "admin_reply"; admin.data = { num: t.num }; store.save();
+      return ctx.answerCbQuery("Пишите в ЛС").catch(() => {});
+    }
+    if (act === "work") { t.status = "work"; t.assignee = who; t.firstResponseAt ??= now(); logTicket(t, `Взял ${who}`); }
+    if (act === "done") { t.status = "solved"; logTicket(t, `Решена ${who}`); }
+    if (act === "close") { t.status = "closed"; logTicket(t, `Закрыта ${who}`); }
+    store.save();
+    await ctx.answerCbQuery("Готово").catch(() => {});
+    await edit(ctx, adminTicketText(t), adminTicketRows(t));
+    if (t.userId) notify(t.userId, `Статус заявки ${ticketCode(t.num)} изменён: ${STATUS[t.status]}`, [[btn("📊 Статус", "cmd_status")]]);
+  });
+
+  async function statusHome(ctx, viaButton) {
+    const u = ctx.state.u;
+    reset(u);
+    const send = viaButton ? edit : say;
+    const mine = db.tickets.filter((t) => t.userId === u.id).sort((a, b) => b.createdAt - a.createdAt).slice(0, 5);
+    if (!mine.length) return send(ctx, "У вас нет активных заявок.", [BACK]);
+    const rows = mine.map((t) => [btn(`${ticketCode(t.num)} · ${STATUS[t.status]}`, `st_${t.num}`)]);
+    rows.push(BACK);
+    return send(ctx, "📊 Ваши обращения:", rows);
+  }
+  bot.command("status", (ctx) => statusHome(ctx, false));
+  bot.action("cmd_status", (ctx) => statusHome(ctx, true));
+  bot.action(/^st_(\d+)$/, async (ctx) => {
+    const t = ticketOf(ctx.match[1]);
+    if (!t || t.userId !== ctx.state.u.id) return;
+    const text = `<b>Заявка ${ticketCode(t.num)}</b>\nСтатус: ${STATUS[t.status]}\nОбновлена: ${fmtDate(t.updatedAt)} (${ago(t.updatedAt, now())})\n\nОписание: ${esc(t.desc)}`;
+    return edit(ctx, text, [[btn("✍️ Написать команде", `ureply_${t.num}`)], BACK]);
+  });
+  bot.action(/^ureply_(\d+)$/, async (ctx) => {
+    const t = ticketOf(ctx.match[1]);
+    if (!t || t.userId !== ctx.state.u.id) return;
+    ctx.state.u.state = "user_reply"; ctx.state.u.data = { num: t.num }; store.save();
+    return say(ctx, `Пишите сообщение для команды по заявке ${ticketCode(t.num)}:`, [BACK]);
+  });
+
+  bot.action("cmd_ai", async (ctx) => {
+    if (!aiOn) return edit(ctx, "ИИ-помощник не подключен.", [BACK]);
+    ctx.state.u.state = "ai_chat"; ctx.state.u.data = { history: [] }; store.save();
+    return edit(ctx, "🤖 ИИ-помощник активен. Задайте ваш вопрос:", [BACK]);
+  });
+
+  const kbRows = (list) => list.map((a) => [btn(`${a.icon} ${a.title}`, `kb_a_${a.id}`)]);
+  bot.action("cmd_kb", async (ctx) => edit(ctx, "📚 База знаний:", [...kbRows(ARTICLES), BACK]));
+  bot.action(/^kb_a_(\w+)$/, async (ctx) => {
+    const a = ARTICLES.find((x) => x.id === ctx.match[1]);
+    if (a) return edit(ctx, a.body, [[btn("📚 К списку", "cmd_kb")], BACK]);
+  });
+  bot.action("cmd_check_link", async (ctx) => {
+    ctx.state.u.state = "link_wait"; store.save();
+    return edit(ctx, "🔎 Пришлите ссылку для проверки. Переходить по ней самим не нужно:", [BACK]);
+  });
+
+  const helpText = "ℹ️ <b>Справка</b>\n\nИспользуйте кнопки меню. Команды: /menu, /report, /join, /status, /cancel.\n/delete удаляет ваши данные из бота.";
+  const helpRows = [[btn("🗑 Удалить данные", "help_del")], BACK];
+  bot.command("help", (ctx) => say(ctx, helpText, helpRows));
+  bot.action("cmd_help", async (ctx) => edit(ctx, helpText, helpRows));
+  bot.action("help_del", async (ctx) => say(ctx, "Удалить все данные? Введите /delete для подтверждения."));
+  bot.command("delete", async (ctx) => {
+    const id = ctx.from.id;
+    for (const t of db.tickets) if (t.userId === id) { t.userId = null; t.desc = "[удалено]"; t.name = "[удалено]"; t.username = null; t.msgs = []; }
+    for (const a of db.apps) if (a.userId === id) { a.userId = null; a.username = null; a.resumeName = "[удалено]"; a.exp = "[удалено]"; }
+    delete db.users[id]; store.save();
+    return say(ctx, "Все ваши данные стёрты.");
+  });
+
+  bot.on("text", async (ctx) => {
+    const u = ctx.state.u;
+    const text = ctx.message.text.trim();
+    if (text.startsWith("/")) return say(ctx, "Неизвестная команда.", MENU);
+    if (CRISIS_PATTERN.test(text) && u.state !== "admin_reply") {
+      await say(ctx, esc(CRISIS_MESSAGE));
+      if (["idle", "ai_chat"].includes(u.state)) return;
+    }
+    switch (u.state) {
+      case "join_name":
+        u.data.resume.name = text.slice(0, 60); u.state = "join_age"; store.save();
+        return say(ctx, "Сколько вам лет?", [BACK]);
+      case "join_age": {
+        const age = parseInt(text, 10);
+        if (isNaN(age) || age < 18) { reset(u); return say(ctx, "Доступ только с 18 лет.", [BACK]); }
+        if (age > 100) return say(ctx, "Укажите настоящий возраст числом.", [BACK]);
+        u.data.resume.age = age; u.state = "join_exp"; store.save();
+        return say(ctx, "Опишите ваш опыт в OSINT:", [BACK]);
+      }
+      case "join_exp":
+        u.data.resume.exp = text.slice(0, 1000); u.state = "join_spec"; u.data.sel = []; store.save();
+        return say(ctx, specText, SPEC_ROWS([]));
+      case "join_spec_other":
+        (u.data.custom ??= []).push(text.slice(0, 80));
+        u.state = "join_spec"; store.save();
+        return say(ctx, specText, SPEC_ROWS(u.data.sel ?? []));
+      case "report_desc": return onDescription(ctx, text);
+      case "report_evidence":
+        return say(ctx, "Пришлите файл или скриншот либо нажмите «Готово».", evidenceRows(u.data.evidence?.length ?? 0));
+      case "user_reply": {
+        const t = ticketOf(u.data.num);
+        if (t && t.userId === u.id) {
+          t.msgs.push({ from: "user", ts: now(), text: text.slice(0, 2000) }); t.updatedAt = now(); store.save();
+          await toAdmin(`💬 Сообщение по заявке ${ticketCode(t.num)}:\n\n${esc(text.slice(0, 2000))}`, [[btn("💬 Ответить", `tk_reply_${t.num}`)]]);
+        }
+        reset(u); return say(ctx, "Передано команде.", [BACK]);
+      }
+      case "admin_reply": {
+        const tk = ticketOf(u.data.num);
+        if (tk?.userId) {
+          tk.msgs.push({ from: "team", ts: now(), text }); tk.firstResponseAt ??= now(); tk.updatedAt = now(); store.save();
+          await notify(tk.userId, `💬 Ответ по заявке ${ticketCode(tk.num)}:\n\n${esc(text)}`, [[btn("✍️ Ответить", `ureply_${tk.num}`)]]);
+          reset(u); return say(ctx, "Отправлено пользователю.");
+        }
+        reset(u); return say(ctx, "Заявка или пользователь не найдены.");
+      }
+      case "ai_chat": {
+        if (!aiOn) { reset(u); return say(ctx, "ИИ-помощник не подключен.", [BACK]); }
+        u.stamps.ai = recent(u.stamps.ai, 60000);
+        if (u.stamps.ai.length > 8) return say(ctx, "Слишком много сообщений подряд. Подождите минуту.", [BACK]);
+        const hist = u.data.history ?? [];
+        hist.push({ role: "user", content: redact(text).text.slice(0, 2000) });
+        ctx.sendChatAction("typing").catch(() => {});
+        try {
+          const ans = await askAi(cfg, hist.slice(-6), fetchImpl);
+          hist.push({ role: "assistant", content: ans });
+          u.data.history = hist.slice(-10); store.save();
+          return say(ctx, esc(ans), [BACK]);
+        } catch (e) {
+          hist.pop();
+          console.error("AI error:", e.message);
+          return say(ctx, e.code === 429 ? "ИИ сейчас перегружен. Попробуйте через минуту." : "ИИ-помощник временно недоступен. Попробуйте позже.", [BACK]);
+        }
+      }
+      case "link_wait": {
+        u.stamps.link = recent(u.stamps.link, 60000);
+        if (u.stamps.link.length > 5) return say(ctx, "Слишком много проверок подряд. Подождите минуту.", [BACK]);
+        ctx.sendChatAction("typing").catch(() => {});
+        const res = await checkLink(text, { fetchImpl, vtKey: cfg.vtKey });
+        reset(u);
+        if (res.error) return say(ctx, esc(res.error), [BACK]);
+        let out = `<b>Результат проверки ссылки</b>\n${esc(defang(res.url))}\n\n${VERDICTS[res.verdict]}`;
+        if (res.finalUrl !== res.url) out += `\nКонечный адрес: ${esc(defang(res.finalUrl))}`;
+        if (res.reasons.length) out += `\n\n<b>Что насторожило:</b>\n${res.reasons.map((r) => "• " + esc(r)).join("\n")}`;
+        if (res.skipped) out += `\n\n<i>${esc(res.skipped)}</i>`;
+        out += "\n\n<i>Это автоматическая оценка, а не гарантия. Не вводите данные на сомнительных сайтах.</i>";
+        return say(ctx, out, [BACK]);
+      }
+      default:
+        return say(ctx, "Используйте меню для управления ботом:", MENU);
+    }
+  });
+
+  bot.catch((err) => console.error("Ошибка бота:", err));
+  return { db };
 }
-const app = lastApp(u);
-if (app?.status === "pending") return send(ctx, "⏳ Ваша заявка на рассмотрении.\nМы сообщим о решении в этом чате.", [BACK]);
-if (app?.status === "rejected" && now() - app.decidedAt < 3 * DAY) {
-const left = Math.ceil((3 * DAY - (now() - app.decidedAt)) / 3600000);
-return send(ctx, Заявка была отклонена${app.reason ? : ${esc(app.reason)} : "."}\nПодать новую можно через ${left} ч., [BACK]);
-}
-return send(ctx, RULES, [[btn("✅ Согласен(а), продолжить", "join_accept")], BACK]);
-}
-bot.command("join", (ctx) => joinHome(ctx, false));
-bot.action("cmd_join", (ctx) => joinHome(ctx, true));
-bot.action("join_profile", async (ctx) => {
-const app = [...db.apps].reverse().find((a) => a.userId === ctx.from.id && a.status === "accepted");
-return edit(ctx, app ? appText(app, false) : "Анкета не найдена.", [BACK]);
-});
-bot.action("join_accept", async (ctx) => {
-const u = ctx.state.u;
-if (!adminChat) return edit(ctx, "Приём заявок пока не настроен: администраторы не подключены. Попробуйте позже.", [BACK]);
-u.state = "join_name"; u.step = 1; u.data = { resume: {} }; store.save();
-return edit(ctx, "Шаг 1 из 4. Резюме\n\nКак к вам обращаться? Напишите имя или псевдоним.", [BACK]);
-});
-bot.action(/^spec_(\d+)$/, async (ctx) => {
-const u = ctx.state.u;
-if (u.state !== "join_spec") return;
-const i = Number(ctx.match[1]);
-const sel = (u.data.sel ??= []);
-const at = sel.indexOf(i);
-if (at >= 0) sel.splice(at, 1); else sel.push(i);
-store.save();
-return edit(ctx, specText, SPEC_ROWS(sel));
-});
-bot.action("spec_other", async (ctx) => {
-const u = ctx.state.u;
-if (u.state !== "join_spec") return;
-u.state = "join_spec_other"; store.save();
-return say(ctx, "Напишите свою специализацию (до 80 символов):", [BACK]);
-});
-bot.action("spec_done", async (ctx) => {
-const u = ctx.state.u;
-if (u.state !== "join_spec") return;
-const specs = [...(u.data.sel ?? []).sort((a, b) => a - b).map((i) => SPECS[i]), ...(u.data.custom ?? [])];
-if (!specs.length) return ctx.answerCbQuery("Выберите хотя бы одну специализацию", { show_alert: true }).catch(() => {});
-u.data.resume.specs = specs;
-u.state = "join_test_intro"; u.step = 3; store.save();
-return edit(ctx, <b>Шаг 3 из 4. Тест по OSINT</b>\n\n12 вопросов с вариантами ответов. Время не ограничено, но пройти тест можно только один раз за заявку., [[btn("🧪 Начать тест", "test_start")], BACK]);
-});
-async function sendQuestion(ctx) {
-const u = ctx.state.u;
-const t = u.data.test;
-const q = QUESTIONS[t.pos];
-const order = t.order[t.pos];
-const lines = order.map((orig, k) => <b>${LETTERS[k]}.</b> ${esc(q.options[orig])}).join("\n\n");
-const text = <b>Вопрос ${t.pos + 1} из ${QUESTIONS.length}</b> · ${esc(q.topic)}\n\n${esc(q.q)}\n\n${lines};
-const rows = [order.map((, k) => btn(LETTERS[k], ans_${t.pos}_${k})), BACK];
-return edit(ctx, text, rows);
-}
-bot.action("test_start", async (ctx) => {
-const u = ctx.state.u;
-if (u.state !== "join_test_intro") return;
-u.state = "join_test";
-u.data.test = { pos: 0, answers: [], order: QUESTIONS.map((q) => shuffle(q.options.map((, i) => i))) };
-store.save();
-return sendQuestion(ctx);
-});
-bot.action(/^ans_(\d+)(\d)$/, async (ctx) => {
-const u = ctx.state.u;
-if (u.state !== "join_test") return;
-const t = u.data.test;
-const pos = Number(ctx.match[1]);
-const k = Number(ctx.match[2]);
-if (pos !== t.pos || k > 3) return;
-t.answers.push(t.order[pos][k] === 0);
-t.pos += 1;
-store.save();
-if (t.pos < QUESTIONS.length) return sendQuestion(ctx);
-return finishTest(ctx);
-});
-async function finishTest(ctx) {
-const u = ctx.state.u;
-const t = u.data.test;
-const score = t.answers.filter(Boolean).length;
-const total = QUESTIONS.length;
-const pct = Math.round((score / total) * 100);
-const verdict = pct >= 75 ? "Отличный результат" : pct >= 50 ? "Неплохо, есть что подтянуть" : "Нужно подтянуть основы";
-u.data.resume.score = score; u.data.resume.total = total; u.data.resume.pct = pct;
-const missed = t.answers.map((ok, i) => (ok ? null : i)).filter((i) => i !== null);
-await edit(ctx, <b>Тест завершён</b>\n\nРезультат: <b>${score} из ${total} (${pct}%)</b>\n${verdict}., null);
-if (missed.length) {
-const review = missed.map((i) => {
-const q = QUESTIONS[i];
-return <b>${i + 1}. ${esc(q.topic)}</b>\nВерно: ${esc(q.options[0])}\n<i>${esc(q.explain)}</i>;
-}).join("\n\n");
-await say(ctx, <b>Разбор ошибок</b>\n\n${review});
-}
-submitApplication(u);
-u.state = "join_done"; u.step = 4; store.save();
-return say(ctx, "Шаг 4 из 4. Заявка отправлена.", [BACK]);
-}
-function appText(app, forAdmin = true) {
-const r = app;
-return <b>🛡️ Заявка в защитники #${r.id}</b>\n\n +
-👤 <b>${esc(r.resumeName)}</b>${forAdmin ?  (${r.username ? "@" + esc(r.username) : "без username"}, id ${r.userId}) : ""}\n +
-🎂 Возраст: ${esc(r.age)}\n +
-🧭 Специализация: ${esc((r.specs ?? []).join(", "))}\n +
-💼 Опыт: ${esc(r.exp)}\n +
-🧪 Тест: <b>${r.score} из ${r.total} (${r.pct}%)</b> +
-(r.status !== "pending" && forAdmin ? \n\nСтатус: ${r.status === "accepted" ? "✅ принят(а)" : "❌ отклонён(а)"} : "");
-}
-function submitApplication(u) {
-const r = u.data.resume;
-db.counters.app += 1;
-const app = {
-id: db.counters.app, userId: u.id, username: u.username, resumeName: r.name, age: r.age, exp: r.exp, specs: r.specs,
-score: r.score, total: r.total, pct: r.pct, status: "pending", createdAt: now(),
-};
-db.apps.push(app);
-store.save();
-toAdmin(appText(app), [[btn("✅ Принять", app_ok_${app.id}), btn("❌ Отклонить", app_no_${app.id})]])
-.then((m) => { app.adminMsgId = m.message_id; store.save(); })
-.catch((e) => console.error("не удалось отправить заявку в админ-чат:", e.message));
-return app;
-}
-bot.action(/^app(ok|no)(\d+)$/, async (ctx) => {
-if (!isAdminChat(ctx)) return ctx.answerCbQuery("Нет доступа", { show_alert: true }).catch(() => {});
-const app = db.apps.find((a) => a.id === Number(ctx.match[2]));
-if (!app) return ctx.answerCbQuery("Заявка не найдена", { show_alert: true }).catch(() => {});
-if (app.status !== "pending") return ctx.answerCbQuery("Решение уже принято", { show_alert: true }).catch(() => {});
-const ok = ctx.match[1] === "ok";
-app.status = ok ? "accepted" : "rejected";
-app.decidedAt = now();
-app.decidedBy = ctx.from.username ?? String(ctx.from.id);
-const cand = db.users[app.userId];
-if (ok && cand) cand.role = "defender";
-store.save();
-await ctx.answerCbQuery(ok ? "Принято" : "Отклонено").catch(() => {});
-await edit(ctx, appText(app) + \n\nРешение: ${ok ? "✅" : "❌"} ${esc(app.decidedBy)}, null);
-notify(app.userId, ok ? "🎉 Вы приняты в команду защитников!" : "Заявка отклонена.", [BACK]);
-});
-const openTickets = (u) => db.tickets.filter((t) => t.userId === u.id && isOpen(t));
-async function reportHome(ctx, viaButton) {
-const u = ctx.state.u;
-reset(u);
-const send = viaButton ? edit : say;
-if (openTickets(u).length >= 3) return send(ctx, "У вас уже 3 открытые заявки.", [[btn("📊 Статус заявки", "cmd_status")], BACK]);
-u.state = "report_prio"; u.step = 1; u.data = {}; store.save();
-const lines = Object.values(PRIORITIES).map((p) => ${p.icon} <b>${p.name}</b>: ${p.hint}).join("\n");
-return send(ctx, <b>🆘 Запрос помощи</b>\n\n${EMERGENCY}\n\n<b>Шаг 1 из 3. Насколько это срочно?</b>\n${lines}, [[btn("🔥 Высокий", "prio_high")], [btn("⚠️ Средний", "prio_mid")], [btn("ℹ️ Низкий", "prio_low")], BACK]);
-}
-bot.command("report", (ctx) => reportHome(ctx, false));
-bot.action("cmd_report", (ctx) => reportHome(ctx, true));
-bot.action(/^prio(high|mid|low)$/, async (ctx) => {
-const u = ctx.state.u;
-if (u.state !== "report_prio") return;
-u.data.prio = ctx.match[1]; u.state = "report_cat"; store.save();
-const keys = Object.keys(CATEGORIES);
-const rows = [];
-for (let i = 0; i < keys.length; i += 2) rows.push(keys.slice(i, i + 2).map((k) => btn(${CATEGORIES[k].icon} ${CATEGORIES[k].label}, cat_${k})));
-rows.push(BACK);
-return edit(ctx, "Шаг 2 из 3. Что случилось?", rows);
-});
-bot.action(/^cat_(\w+)$/, async (ctx) => {
-const u = ctx.state.u;
-if (u.state !== "report_cat" || !CATEGORIES[ctx.match[1]]) return;
-u.data.cat = ctx.match[1]; u.state = "report_desc"; u.data.evidence = []; store.save();
-const c = CATEGORIES[u.data.cat];
-return edit(ctx, <b>Шаг 3 из 3. Опишите проблему</b>\n\n${c.prompt}, [BACK]);
-});
-const evidenceRows = (n) => [[btn(n ? ✅ Готово (${n}) : "➡️ Пропустить", "rep_done")], BACK];
-async function onDescription(ctx, text) {
-const u = ctx.state.u;
-if (text.length < 30) return say(ctx, "Опишите подробнее (от 30 символов).", [BACK]);
-const r = redact(text);
-u.data.desc = r.text;
-u.state = "report_evidence"; store.save();
-return say(ctx, "Принято. Можете прислать вложения, затем нажмите Готово.", evidenceRows(0));
-}
-bot.action("rep_done", async (ctx) => {
-const u = ctx.state.u;
-if (u.state !== "report_evidence") return;
-u.state = "report_confirm"; store.save();
-const c = CATEGORIES[u.data.cat];
-const chosen = PRIORITIES[u.data.prio];
-const text = <b>Проверьте заявку</b>\n\n${c.icon} ${c.label}\nПриоритет: ${chosen.icon} <b>${chosen.name}</b>;
-return edit(ctx, text, [[btn("📨 Отправить заявку", rep_send_${u.data.prio})], BACK]);
-});
-const adminTicketText = (t) => {
-const p = PRIORITIES[t.prio];
-const c = CATEGORIES[t.cat];
-return <b>Заявка ${ticketCode(t.num)}</b> · ${STATUS[t.status]}\nПриоритет: ${p.icon} ${p.name}\nКатегория: ${c.label}\n👤 ${esc(t.name)} (@${esc(t.username)})\n\nОписание: ${esc(t.desc)};
-};
-const adminTicketRows = (t) => [
-[btn("🔧 Взять в работу", tk_work_${t.num}), btn("✅ Решено", tk_done_${t.num})],
-[btn("💬 Написать пользователю", tk_reply_${t.num}), btn("❌ Закрыть", tk_close_${t.num})],
-];
-bot.action(/^rep_send_(high|mid|low)$/, async (ctx) => {
-const u = ctx.state.u;
-if (u.state !== "report_confirm") return;
-const final = ctx.match[1];
-db.counters.ticket += 1;
-const t = {
-num: db.counters.ticket, userId: u.id, username: u.username, name: u.name,
-prio: final, chosen: u.data.prio, cat: u.data.cat, desc: u.data.desc,
-evidenceCount: u.data.evidence.length, status: "new", createdAt: now(), updatedAt: now(),
-assignee: null, firstResponseAt: null, log: [{ ts: now(), text: "Создана" }], msgs: [],
-};
-db.tickets.push(t);
-const evidence = u.data.evidence;
-reset(u);
-try {
-const m = await toAdmin(adminTicketText(t), adminTicketRows(t));
-t.adminMsgId = m.message_id;
-for (const e of evidence) await tg.copyMessage(adminChat, e.chat, e.msg).catch(() => {});
-} catch (e) {}
-store.save();
-return edit(ctx, ✅ Заявка ${ticketCode(t.num)} создана., [[btn("📊 Статус", "cmd_status")], BACK]);
-});
-bot.action(/^tk_(work|done|close|reply)(\d+)$/, async (ctx) => {
-if (!isAdminChat(ctx)) return ctx.answerCbQuery("Нет доступа").catch(() => {});
-const [, act, n] = ctx.match;
-const t = ticketOf(n);
-if (!t) return ctx.answerCbQuery("Не найдена").catch(() => {});
-const who = ctx.from.username ? "@" + ctx.from.username : String(ctx.from.id);
-if (act === "reply") {
-const admin = ctx.state.u;
-admin.state = "admin_reply"; admin.data = { num: t.num }; store.save();
-await tg.sendMessage(ctx.from.id, ✍️ Напишите ответ по заявке <b>${ticketCode(t.num)}</b>:);
-return ctx.answerCbQuery("Пишите в ЛС").catch(() => {});
-}
-if (act === "work") { t.status = "work"; t.assignee = who; logTicket(t, Взял ${who}); }
-if (act === "done") { t.status = "solved"; logTicket(t, Решена ${who}); }
-if (act === "close") { t.status = "closed"; logTicket(t, Закрыта ${who}); }
-store.save();
-await edit(ctx, adminTicketText(t), adminTicketRows(t));
-});
-async function statusHome(ctx, viaButton) {
-const u = ctx.state.u;
-reset(u);
-const send = viaButton ? edit : say;
-const mine = db.tickets.filter((t) => t.userId === u.id).sort((a, b) => b.createdAt - a.createdAt).slice(0, 5);
-if (!mine.length) return send(ctx, "У вас нет activeных заявок.", [BACK]);
-const rows = mine.map((t) => [btn(${ticketCode(t.num)} · ${STATUS[t.status]}, st_${t.num})]);
-rows.push(BACK);
-return send(ctx, "📊 Ваши обращения:", rows);
-}
-bot.command("status", (ctx) => statusHome(ctx, false));
-bot.action("cmd_status", (ctx) => statusHome(ctx, true));
-bot.action(/^st(\d+)$/, async (ctx) => {
-const t = ticketOf(ctx.match[1]);
-if (!t || t.userId !== ctx.state.u.id) return;
-const text = <b>Заявка ${ticketCode(t.num)}</b>\nСтатус: ${STATUS[t.status]}\n\nОписание: ${esc(t.desc)};
-return edit(ctx, text, [[btn("✍️ Написать команде", ureply_${t.num})], BACK]);
-});
-bot.action(/^ureply_(\d+)$/, async (ctx) => {
-ctx.state.u.state = "user_reply"; ctx.state.u.data = { num: ctx.match[1] }; store.save();
-return say(ctx, Пишите сообщение для команды по заявке ${ticketCode(ctx.match[1])}:, [BACK]);
-});
-bot.action("cmd_ai", async (ctx) => {
-if (!aiOn) return edit(ctx, "ИИ-помощник не подключен.", [BACK]);
-ctx.state.u.state = "ai_chat"; ctx.state.u.data = { history: [] }; store.save();
-return edit(ctx, "🤖 ИИ-помощник активен. Задайте ваш вопрос:", [BACK]);
-});
-const kbRows = (list) => list.map((a) => [btn(${a.icon} ${a.title}, kb_a_${a.id})]);
-bot.action("cmd_kb", async (ctx) => edit(ctx, "📚 База знаний:", [...kbRows(ARTICLES), BACK]));
-bot.action(/^kb_a_(\w+)$/, async (ctx) => {
-const a = ARTICLES.find((x) => x.id === ctx.match[1]);
-if (a) return edit(ctx, a.body, [[btn("⚖️ К списку", "cmd_kb")], BACK]);
-});
-bot.action("cmd_check_link", async (ctx) => {
-ctx.state.u.state = "link_wait"; store.save();
-return edit(ctx, "🔎 Пришлите ссылку для проверки без перехода:", [BACK]);
-});
-const helpRows = [[btn("🗑 Удалить данные", "help_del")], BACK];
-bot.command("help", (ctx) => say(ctx, "ℹ️ Справка по боту. Используйте кнопки меню.", helpRows));
-bot.action("cmd_help", async (ctx) => edit(ctx, "ℹ️ Справка по боту. Используйте кнопки меню.", helpRows));
-bot.action("help_del", async (ctx) => say(ctx, "Удалить все данные? Введите /delete для подтверждения."));
-bot.command("delete", async (ctx) => {
-const id = ctx.from.id;
-for (const t of db.tickets) if (t.userId === id) { t.userId = null; t.desc = "[удалено]"; }
-delete db.users[id]; store.save();
-return say(ctx, "Все ваши данные полностью стёрты.");
-});
-bot.on("text", async (ctx) => {
-const u = ctx.state.u;
-const text = ctx.message.text.trim();
-if (text.startsWith("/")) return say(ctx, "Неизвестная команда.", MENU);
-switch (u.state) {
-case "join_name":
-u.data.resume.name = text; u.state = "join_age"; store.save();
-return say(ctx, "Сколько вам лет?", [BACK]);
-case "join_age":
-const age = parseInt(text, 10);
-if (isNaN(age) || age < 18) { reset(u); return say(ctx, "Доступ только с 18 лет.", [BACK]); }
-u.data.resume.age = age; u.state = "join_exp"; store.save();
-return say(ctx, "Опишите ваш опыт в OSINT:", [BACK]);
-case "join_exp":
-u.data.resume.exp = text; u.state = "join_spec"; u.data.sel = []; store.save();
-return say(ctx, specText, SPEC_ROWS([]));
-case "report_desc": return onDescription(ctx, text);
-case "user_reply":
-const t = ticketOf(u.data.num);
-if (t) {
-t.msgs.push({ from: "user", ts: now(), text }); store.save();
-await toAdmin(💬 Сообщение по заявке ${ticketCode(t.num)}:\n\n${esc(text)});
-}
-reset(u); return say(ctx, "Передано команде.", [BACK]);
-case "admin_reply":
-const tk = ticketOf(u.data.num);
-if (tk) {
-tk.msgs.push({ from: "team", ts: now(), text }); store.save();
-await notify(tk.userId, 💬 Ответ по заявке ${ticketCode(tk.num)}:\n\n${esc(text)});
-}
-reset(u); return say(ctx, "Отправлено пользователю.");
-case "ai_chat":
-const hist = u.data.history ?? [];
-hist.push({ role: "user", content: text });
-const ans = await askAi(cfg, hist.slice(-6), fetchImpl);
-hist.push({ role: "assistant", content: ans }); store.save();
-return say(ctx, ans, [BACK]);
-case "link_wait":
-const res = await checkLink(text, { fetchImpl, vtKey: cfg.vtKey });
-reset(u); return say(ctx, res.error ? res.error : Результат проверки ссылки:\nРиск: ${res.verdict}, [BACK]);
-default:
-return say(ctx, "Используйте меню для управления ботом:", MENU);
-}
-});
-bot.catch((err) => console.error("Ошибка бота:", err));
-return { db };
-}
+
 async function main() {
-loadEnv();
-const cfg = readConfig();
-if (!cfg.token) { console.error("❌ Нет BOT_TOKEN."); process.exit(1); }
-const { Telegraf } = await import("telegraf");
-const bot = new Telegraf(cfg.token, { handlerTimeout: 90_000 });
-let store;
-if (cfg.supabaseUrl && cfg.supabaseKey) {
-store = await createSupabaseDb({ url: cfg.supabaseUrl, key: cfg.supabaseKey });
-console.log("💾 Данные хранятся в Supabase");
-} else {
-store = createDb(cfg.dataDir);
-console.log("💾 Данные хранятся в локальном файле json");
+  loadEnv();
+  const cfg = readConfig();
+  if (!cfg.token) { console.error("❌ Нет BOT_TOKEN."); process.exit(1); }
+  const { Telegraf } = await import("telegraf");
+  const bot = new Telegraf(cfg.token, { handlerTimeout: 90_000 });
+  let store;
+  if (cfg.supabaseUrl && cfg.supabaseKey) {
+    store = await createSupabaseDb({ url: cfg.supabaseUrl, key: cfg.supabaseKey });
+    console.log("💾 Данные хранятся в Supabase");
+  } else {
+    store = createDb(cfg.dataDir);
+    console.log("💾 Данные хранятся в локальном файле json");
+  }
+  buildBot(bot, { cfg, store });
+  const http = await import("node:http");
+  http.createServer((_, res) => { res.writeHead(200); res.end("ok"); }).listen(Number(process.env.PORT) || 3000);
+  await bot.telegram.setMyCommands([
+    { command: "menu", description: "Главное меню" },
+    { command: "report", description: "Сообщить о проблеме" },
+    { command: "join", description: "Стать защитником" },
+    { command: "status", description: "Статус обращений" },
+  ]).catch(() => {});
+  setInterval(() => store.flush(), 30_000).unref();
+  const stop = async (sig) => {
+    try { bot.stop(sig); } catch {}
+    await store.flush();
+    process.exit(0);
+  };
+  process.once("SIGINT", () => stop("SIGINT"));
+  process.once("SIGTERM", () => stop("SIGTERM"));
+  bot.launch().catch((e) => { console.error("Не удалось запустить бота:", e); process.exit(1); });
+  console.log("✅ Бот успешно запущен");
 }
-buildBot(bot, { cfg, store });
-const http = await import("node:http");
-http.createServer((_, res) => { res.writeHead(200); res.end("ok"); }).listen(Number(process.env.PORT) || 3000);
-await bot.telegram.setMyCommands([
-{ command: "menu", description: "Главное меню" },
-{ command: "report", description: "Сообщить о проблеме" },
-{ command: "join", description: "Стать защитником" },
-{ command: "status", description: "Статус обращений" },
-]).catch(() => {});
-setInterval(() => store.flush(), 30_000);
-bot.launch().catch(() => process.exit(1));
-console.log("✅ Бот успешно запущен");
-}
-const isMain = process.argv && path.resolve(process.argv ?? "") === fileURLToPath(import.meta.url);
+
+const isMain = !!process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) main();
