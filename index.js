@@ -1443,6 +1443,35 @@ export function buildBot(bot, deps) {
   return { db, pollPayments };
 }
 
+// Render free усыпляет сервис после 15 минут без ВХОДЯЩИХ http-запросов.
+// Long polling Telegram — это исходящий трафик, он не считается, поэтому
+// бот сам стучится в свой публичный адрес (через балансировщик Render).
+function startKeepAlive() {
+  const base = (process.env.KEEPALIVE_URL || process.env.RENDER_EXTERNAL_URL || "").trim().replace(/\/$/, "");
+  if (!base) {
+    console.log("⏰ Keep-alive выключен: нет RENDER_EXTERNAL_URL / KEEPALIVE_URL");
+    return;
+  }
+  const every = Math.max(30, Number(process.env.KEEPALIVE_SEC) || 240) * 1000; // по умолчанию раз в 4 минуты
+  let fails = 0;
+  const ping = async () => {
+    try {
+      const r = await fetch(`${base}/?k=${Date.now()}`, {
+        signal: AbortSignal.timeout(25_000),
+        headers: { "Cache-Control": "no-cache", "User-Agent": "keepalive" },
+      });
+      await r.arrayBuffer().catch(() => {});
+      if (fails) console.log("⏰ Keep-alive снова работает");
+      fails = 0;
+    } catch (e) {
+      if (++fails <= 3 || fails % 10 === 0) console.error("⏰ Keep-alive ошибка:", e.message);
+    }
+  };
+  setTimeout(ping, 20_000);
+  setInterval(ping, every);
+  console.log(`⏰ Keep-alive: ${base} каждые ${every / 1000} с`);
+}
+
 async function main() {
   loadEnv();
   const cfg = readConfig();
@@ -1464,7 +1493,9 @@ async function main() {
     app.pollPayments();
   }
   const http = await import("node:http");
-  http.createServer((_, res) => { res.writeHead(200); res.end("ok"); }).listen(Number(process.env.PORT) || 3000);
+  http.createServer((_, res) => { res.writeHead(200, { "Content-Type": "text/plain" }); res.end("ok"); })
+    .listen(Number(process.env.PORT) || 3000, "0.0.0.0");
+  startKeepAlive();
   await bot.telegram.setMyCommands([
     { command: "menu", description: "Главное меню" },
     { command: "report", description: "Сообщить о проблеме" },
