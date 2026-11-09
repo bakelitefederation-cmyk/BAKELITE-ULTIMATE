@@ -15,7 +15,7 @@ function loadEnv(file = ".env") {
   } catch {}
 }
 
-export const VERSION = "5.0.0";
+export const VERSION = "5.1.0";
 export const AUTHOR = "@kartochniy";
 
 export function readConfig(env = process.env) {
@@ -30,6 +30,13 @@ export function readConfig(env = process.env) {
     dataDir: env.DATA_DIR ?? "./data",
     supabaseUrl: (env.SUPABASE_URL ?? "").trim(),
     supabaseKey: (env.SUPABASE_KEY ?? "").trim(),
+    cpToken: (env.CRYPTO_PAY_TOKEN ?? "").trim(),
+    cpBase: String(env.CRYPTO_PAY_TESTNET ?? "") === "1" ? "https://testnet-pay.crypt.bot/api" : "https://pay.crypt.bot/api",
+    cpAssets: (env.CRYPTO_PAY_ASSETS ?? "USDT,TON,USDC").replace(/\s+/g, ""),
+    urgentUsd: Number(env.URGENT_PRICE_USD) > 0 ? Number(env.URGENT_PRICE_USD) : 2,
+    prepayPct: Math.min(99, Math.max(1, Number(env.PREPAY_PERCENT) || 25)),
+    minBudgetUsd: Number(env.MIN_BUDGET_USD) > 0 ? Number(env.MIN_BUDGET_USD) : 10,
+    maxBudgetUsd: Number(env.MAX_BUDGET_USD) > 0 ? Number(env.MAX_BUDGET_USD) : 10000,
   };
 }
 
@@ -256,7 +263,7 @@ export function suggestPriority(category, text) {
 
 export function createDb(dir) {
   const file = path.join(dir, "db.json");
-  let db = { users: {}, tickets: [], apps: [], counters: { ticket: 0, app: 0 } };
+  let db = { users: {}, tickets: [], apps: [], payments: [], counters: { ticket: 0, app: 0, pay: 0 } };
   try {
     fs.mkdirSync(dir, { recursive: true });
     if (fs.existsSync(file)) {
@@ -289,7 +296,7 @@ export async function createSupabaseDb({ url, key, fetchImpl = fetch, table = "b
     Authorization: `Bearer ${key}`,
     "Content-Type": "application/json",
   };
-  let db = { users: {}, tickets: [], apps: [], counters: { ticket: 0, app: 0 } };
+  let db = { users: {}, tickets: [], apps: [], payments: [], counters: { ticket: 0, app: 0, pay: 0 } };
   const res = await fetchImpl(`${base}?id=eq.1&select=data`, { headers });
   if (!res.ok) {
     const body = (await res.text().catch(() => "")).slice(0, 300);
@@ -517,7 +524,22 @@ export async function askAi(cfg, messages, fetchImpl = fetch) {
   throw lastErr ?? new Error("ai failed");
 }
 
+export async function cryptoPay(cfg, method, params = {}, fetchImpl = fetch) {
+  if (!cfg.cpToken) throw new Error("CryptoPay: не задан CRYPTO_PAY_TOKEN");
+  const res = await fetchImpl(`${cfg.cpBase ?? "https://pay.crypt.bot/api"}/${method}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Crypto-Pay-API-Token": cfg.cpToken },
+    body: JSON.stringify(params),
+    signal: AbortSignal.timeout(15000),
+  });
+  let data = null;
+  try { data = await res.json(); } catch {}
+  if (!res.ok || !data?.ok) throw new Error(`CryptoPay ${method}: ${data?.error?.name ?? data?.error?.code ?? `HTTP ${res.status}`}`);
+  return data.result;
+}
+
 const btn = (text, data) => ({ text, callback_data: data });
+const urlBtn = (text, url) => ({ text, url });
 const BACK = [btn("⬅️ Вернуться в меню", "cmd_menu")];
 const MENU = [
   [btn("🛡️ Стать защитником", "cmd_join")],
@@ -600,7 +622,7 @@ export function buildBot(bot, deps) {
     ctx.state.u = u;
     u.stamps.msg = recent(u.stamps.msg, 10000);
     if (u.stamps.msg.length > 25) return;
-    if (ctx.callbackQuery && !/^(tk_|app_|adm_|dt_)/.test(data)) ctx.answerCbQuery().catch(() => {});
+    if (ctx.callbackQuery && !/^(tk_|app_|adm_|dt_|pay_chk_|pay_re_)/.test(data)) ctx.answerCbQuery().catch(() => {});
     return next();
   });
 
@@ -813,31 +835,275 @@ export function buildBot(bot, deps) {
     const raised = sug.rank > PRIORITIES[d.prio].rank;
     return { key: raised ? sug.key : d.prio, raised, reasons: sug.reasons };
   };
-  bot.action("rep_done", async (ctx) => {
-    const u = ctx.state.u;
-    if (u.state !== "report_evidence") return;
-    u.state = "report_confirm"; store.save();
+  // ===== платежи: Crypto Pay (@CryptoBot) =====
+  db.payments ??= [];
+  db.counters.pay ??= 0;
+  const payOn = () => !!cfg.cpToken;
+  const usd = (c) => (c / 100).toFixed(2);
+  const urgentCents = () => Math.round(cfg.urgentUsd * 100);
+  const pct = () => cfg.prepayPct ?? 25;
+  const splitBudget = (total) => { const pre = Math.round((total * pct()) / 100); return { total, pre, rest: total - pre }; };
+  const stageOf = (t) => t.pay?.stage ?? "none";
+  const setStage = (t, st) => { t.pay = { ...(t.pay ?? {}), stage: st }; };
+  const PAY_STAGE = {
+    none: "счёт ещё не выставлялся", prepay_wait: "⏳ ждём предоплату", prepaid: "✅ предоплата получена",
+    final_wait: "⏳ ждём оплату остатка", paid: "✅ оплачено полностью", refunded: "↩️ возврат оформлен",
+  };
+  const KIND_TITLE = { urgent: "срочный запрос", prepay: "предоплата", final: "остаток" };
+  const payLine = (t) => {
+    if (!t.budgetCents) return "";
+    const b = splitBudget(t.budgetCents);
+    return `\n\n💰 Бюджет: $${usd(b.total)} (предоплата ${pct()}% — $${usd(b.pre)}, остаток $${usd(b.rest)})\nОплата: ${PAY_STAGE[stageOf(t)]}`;
+  };
+  const payRows = (p) => [[urlBtn(`💳 Оплатить $${usd(p.cents)} в CryptoBot`, p.url)], [btn("🔄 Проверить оплату", `pay_chk_${p.id}`)]];
+  const toAdminSafe = (text, rows) => toAdmin(text, rows).catch((e) => console.error("toAdmin:", e.message));
+  const payAllowed = (u) => { u.stamps.pay = recent(u.stamps.pay, 3600000); return u.stamps.pay.length <= 6; };
+  const cancelActive = (t, kind) => { for (const p of db.payments) if (p.ticketNum === t.num && p.status === "active" && (!kind || p.kind === kind)) p.status = "cancelled"; };
+  const paidSum = (t) => db.payments.filter((p) => p.ticketNum === t.num && p.status === "paid" && p.kind !== "urgent").reduce((a, p) => a + p.cents, 0);
+
+  let botUser = null;
+  const getBotUser = async () => {
+    if (botUser) return botUser;
+    try { botUser = (await tg.getMe()).username; } catch {}
+    return botUser;
+  };
+
+  async function createPayment(t, kind, cents) {
+    const ex = db.payments.find((p) => p.ticketNum === t.num && p.kind === kind && p.status === "active");
+    if (ex) return ex;
+    const ttl = { urgent: 12 * 3600, prepay: 48 * 3600, final: 7 * 86400 }[kind];
+    const label = { urgent: "Срочный запрос", prepay: "Предоплата за кейс", final: "Оплата остатка за кейс" }[kind];
+    const params = {
+      currency_type: "fiat", fiat: "USD", accepted_assets: cfg.cpAssets, amount: usd(cents),
+      description: `${label} ${ticketCode(t.num)}`, payload: `${t.num}:${kind}`, expires_in: ttl,
+      allow_comments: false, allow_anonymous: false,
+    };
+    const bu = await getBotUser();
+    if (bu) { params.paid_btn_name = "openBot"; params.paid_btn_url = `https://t.me/${bu}`; }
+    const inv = await cryptoPay(cfg, "createInvoice", params, fetchImpl);
+    const url = inv?.bot_invoice_url ?? inv?.pay_url;
+    if (!inv?.invoice_id || !url) throw new Error("CryptoPay: пустой счёт");
+    const p = {
+      id: ++db.counters.pay, invoiceId: Number(inv.invoice_id), ticketNum: t.num, userId: t.userId, kind, cents,
+      status: "active", url, createdAt: now(), expiresAt: now() + ttl * 1000, reminders: 0, lastRemindAt: null,
+    };
+    db.payments.push(p);
+    store.save();
+    return p;
+  }
+
+  const refreshAdminMsg = async (t) => {
+    if (!t.adminMsgId || !adminChat) return;
+    try { await tg.editMessageText(adminChat, t.adminMsgId, undefined, adminTicketText(t), extra(adminTicketRows(t))); }
+    catch (e) { if (!/not modified/i.test(String(e?.message))) console.error("refresh admin msg:", e.message); }
+  };
+
+  async function markUrgent(t, via = "CryptoBot") {
+    if (t.urgent) return;
+    t.urgent = true; t.prio = "high";
+    logTicket(t, `⚡ Срочный запрос оплачен (${via})`); store.save();
+    if (t.userId) notify(t.userId, `⚡ Срочный запрос оплачен. Заявка ${ticketCode(t.num)} получила высший приоритет, команда увидит её первой.`, [[btn("📊 Статус", "cmd_status")]]);
+    await toAdminSafe(`⚡ <b>СРОЧНЫЙ ЗАПРОС ОПЛАЧЕН</b> · ${ticketCode(t.num)}\nВозьмите заявку в приоритетном порядке.`, adminTicketRows(t));
+    await refreshAdminMsg(t);
+  }
+  async function markPrepaid(t, via = "CryptoBot") {
+    if (["prepaid", "final_wait", "paid", "refunded"].includes(stageOf(t))) return;
+    setStage(t, "prepaid");
+    logTicket(t, `💰 Предоплата получена (${via})`); store.save();
+    const b = splitBudget(t.budgetCents);
+    if (t.userId) notify(t.userId, `✅ Предоплата получена. Защитник приступает к кейсу <b>${ticketCode(t.num)}</b>.\nОстаток <b>$${usd(b.rest)}</b> вы оплатите после решения.`, [[btn("📊 Статус", "cmd_status")]]);
+    await toAdminSafe(`💰 <b>Предоплата получена</b> · ${ticketCode(t.num)}${t.assignee ? `\nМожно начинать: ${esc(t.assignee)}` : ""}`, adminTicketRows(t));
+    await refreshAdminMsg(t);
+  }
+  async function markFinalPaid(t, via = "CryptoBot") {
+    if (["paid", "refunded"].includes(stageOf(t))) return;
+    setStage(t, "paid");
+    logTicket(t, `✅ Остаток оплачен (${via})`); store.save();
+    if (t.userId) notify(t.userId, `✅ Оплата получена полностью. Спасибо! Кейс <b>${ticketCode(t.num)}</b> завершён.`, [BACK]);
+    await toAdminSafe(`✅ <b>Кейс оплачен полностью</b> · ${ticketCode(t.num)}`, adminTicketRows(t));
+    await refreshAdminMsg(t);
+  }
+
+  async function sendPrepayInvoice(t) {
+    const b = splitBudget(t.budgetCents);
+    const p = await createPayment(t, "prepay", b.pre);
+    setStage(t, "prepay_wait"); logTicket(t, `Выставлен счёт на предоплату $${usd(b.pre)}`); store.save();
+    if (t.userId) await notify(t.userId,
+      `🛡 Защитник взялся за ваш кейс <b>${ticketCode(t.num)}</b>.\n\nЧтобы он начал работу, нужна предоплата ${pct()}% — <b>$${usd(b.pre)}</b> (из суммы $${usd(b.total)}). Остаток $${usd(b.rest)} — после решения.\n\nОплата в @CryptoBot (USDT, TON и другие монеты). Счёт действует 48 часов.`, payRows(p));
+    return p;
+  }
+  async function sendFinalInvoice(t) {
+    const b = splitBudget(t.budgetCents);
+    const p = await createPayment(t, "final", b.rest);
+    setStage(t, "final_wait"); logTicket(t, `Выставлен счёт на остаток $${usd(b.rest)}`); store.save();
+    if (t.userId) await notify(t.userId,
+      `✅ Кейс <b>${ticketCode(t.num)}</b> решён.\n\nОстаток к оплате: <b>$${usd(b.rest)}</b> (предоплата $${usd(b.pre)} уже получена). Счёт действует 7 дней.`, payRows(p));
+    return p;
+  }
+
+  async function offerUrgent(ctx, t) {
+    if (!payOn()) return say(ctx, "Приём оплаты сейчас не подключён.");
+    if (!payAllowed(ctx.state.u)) return say(ctx, "Слишком много счетов за час. Попробуйте позже.");
+    try {
+      const p = await createPayment(t, "urgent", urgentCents());
+      return say(ctx,
+        `⚡ <b>Срочный запрос — $${usd(p.cents)}</b>\n\nПосле оплаты заявка ${ticketCode(t.num)} получит высший приоритет, и команда увидит её первой.\nОплата в @CryptoBot (USDT, TON и другие монеты). Счёт действует 12 часов.\n\nЗаявка уже отправлена команде и без оплаты: срочность — это только ускорение.`, payRows(p));
+    } catch (e) {
+      console.error("urgent invoice:", e.message);
+      return say(ctx, "Не удалось выставить счёт. Заявка сохранена, повторить можно в «📊 Статус заявки».");
+    }
+  }
+
+  // --- опрос счетов (без вебхуков) ---
+  async function onPaid(p, inv) {
+    p.status = "paid"; p.paidAt = now(); p.paidAsset = inv.paid_asset ?? null; p.paidAmount = inv.paid_amount ?? null; store.save();
+    const t = ticketOf(p.ticketNum);
+    if (!t) return;
+    if (p.kind === "urgent") await markUrgent(t);
+    else if (p.kind === "prepay") await markPrepaid(t);
+    else if (p.kind === "final") await markFinalPaid(t);
+  }
+  async function onExpired(p) {
+    p.status = "expired"; store.save();
+    const t = ticketOf(p.ticketNum);
+    if (!t || !t.userId) return;
+    const waiting = p.kind === "urgent" ? !t.urgent : stageOf(t) === (p.kind === "prepay" ? "prepay_wait" : "final_wait");
+    if (!waiting) return;
+    notify(t.userId, `⌛ Счёт на $${usd(p.cents)} по заявке ${ticketCode(t.num)} истёк.`, [[btn("🔁 Выставить счёт заново", `pay_re_${p.id}`)]]);
+    if (p.kind !== "urgent") await toAdminSafe(`⌛ Счёт истёк · ${ticketCode(t.num)} (${KIND_TITLE[p.kind]} $${usd(p.cents)}). Клиент может запросить новый, или нажмите «Выставить счёт».`, adminTicketRows(t));
+  }
+  async function sendReminders() {
+    const t0 = now();
+    for (const p of db.payments) {
+      if (p.status !== "active" || p.kind === "urgent" || p.reminders >= 3) continue;
+      if (t0 - (p.lastRemindAt ?? p.createdAt) < 6 * 3600000) continue;
+      p.reminders += 1; p.lastRemindAt = t0;
+      const t = ticketOf(p.ticketNum);
+      if (t?.userId) await notify(t.userId, `⏰ Напоминание: ждём оплату <b>$${usd(p.cents)}</b> по заявке ${ticketCode(t.num)} (${KIND_TITLE[p.kind]}).`, payRows(p));
+    }
+    store.save();
+  }
+  async function doPoll(ids) {
+    if (!payOn()) return;
+    const active = db.payments.filter((p) => p.status === "active" && (!ids || ids.includes(p.id)));
+    for (let i = 0; i < active.length; i += 50) {
+      const chunk = active.slice(i, i + 50);
+      let items;
+      try {
+        const r = await cryptoPay(cfg, "getInvoices", { invoice_ids: chunk.map((p) => p.invoiceId).join(",") }, fetchImpl);
+        items = Array.isArray(r) ? r : (r?.items ?? []);
+      } catch (e) { console.error("CryptoPay getInvoices:", e.message); continue; }
+      for (const inv of items) {
+        const p = chunk.find((x) => x.invoiceId === Number(inv.invoice_id));
+        if (!p || p.status !== "active") continue;
+        if (inv.status === "paid") await onPaid(p, inv);
+        else if (inv.status === "expired") await onExpired(p);
+      }
+    }
+    if (!ids) await sendReminders();
+  }
+  let pollChain = Promise.resolve();
+  const pollPayments = (ids) => (pollChain = pollChain.then(() => doPoll(ids)).catch((e) => console.error("poll:", e.message)));
+
+  const ownPayment = (ctx) => { const p = db.payments.find((x) => x.id === Number(ctx.match[1])); return p && p.userId === ctx.from.id ? p : null; };
+  bot.action(/^pay_chk_(\d+)$/, async (ctx) => {
+    const p = ownPayment(ctx);
+    if (!p) return ctx.answerCbQuery("Счёт не найден").catch(() => {});
+    if (p.status === "active") await pollPayments([p.id]);
+    const msg = p.status === "paid" ? "✅ Оплата получена" : p.status === "expired" ? "⌛ Счёт истёк — выставьте новый" : "Оплата пока не найдена. Подождите минуту после оплаты и проверьте снова.";
+    return ctx.answerCbQuery(msg, { show_alert: p.status !== "paid" }).catch(() => {});
+  });
+  bot.action(/^pay_re_(\d+)$/, async (ctx) => {
+    const p = ownPayment(ctx);
+    const t = p && ticketOf(p.ticketNum);
+    if (!p || !t || p.status !== "expired") return ctx.answerCbQuery("Этот счёт заново выставить нельзя", { show_alert: true }).catch(() => {});
+    await ctx.answerCbQuery("Выставляю счёт…").catch(() => {});
+    try {
+      if (p.kind === "urgent") { if (!t.urgent) await offerUrgent(ctx, t); }
+      else if (!payAllowed(ctx.state.u)) await say(ctx, "Слишком много счетов за час. Попробуйте позже.");
+      else if (p.kind === "prepay" && stageOf(t) === "prepay_wait") await sendPrepayInvoice(t);
+      else if (p.kind === "final" && stageOf(t) === "final_wait") await sendFinalInvoice(t);
+    } catch (e) { console.error("reissue:", e.message); await say(ctx, "Не удалось выставить счёт. Попробуйте позже или напишите команде."); }
+  });
+  bot.action(/^urg_(\d+)$/, async (ctx) => {
+    const t = ticketOf(ctx.match[1]);
+    if (!t || t.userId !== ctx.state.u.id || !isOpen(t) || t.urgent) return;
+    return offerUrgent(ctx, t);
+  });
+
+  // ===== создание заявки =====
+  function confirmView(u) {
     const c = CATEGORIES[u.data.cat];
     const fp = finalPriority(u.data);
     const p = PRIORITIES[fp.key];
     let text = `<b>Проверьте заявку</b>\n\n${c.icon} ${esc(c.label)}\nПриоритет: ${p.icon} <b>${p.name}</b>`;
     if (fp.raised) text += `\n<i>Приоритет повышен автоматически: ${esc(fp.reasons.join("; "))}</i>`;
+    if (u.data.budgetCents) {
+      const b = splitBudget(u.data.budgetCents);
+      text += `\n💰 Платный кейс: <b>$${usd(b.total)}</b>. Предоплата ${pct()}% ($${usd(b.pre)}) — когда защитник возьмётся за работу, остаток $${usd(b.rest)} — после решения.`;
+    }
     text += `\nВложений: ${u.data.evidence.length}\n\n${esc(u.data.desc)}`;
-    return edit(ctx, text, [[btn("📨 Отправить заявку", "rep_send")], BACK]);
+    const rows = [[btn(u.data.budgetCents ? "📨 Отправить (платный кейс)" : "📨 Отправить бесплатно", "rep_send")]];
+    if (payOn()) {
+      rows.push([btn(`⚡ Срочно за $${usd(urgentCents())}`, "rep_urgent")]);
+      rows.push([u.data.budgetCents ? btn("❌ Убрать сумму", "rep_nobudget") : btn("💰 Платный кейс: указать сумму", "rep_budget")]);
+    }
+    rows.push(BACK);
+    return { text, rows };
+  }
+  bot.action("rep_done", async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "report_evidence") return;
+    u.state = "report_confirm"; store.save();
+    const v = confirmView(u);
+    return edit(ctx, v.text, v.rows);
   });
+  bot.action("rep_budget", async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "report_confirm" || !payOn()) return;
+    u.state = "report_budget"; store.save();
+    return edit(ctx, `💰 <b>Платный кейс</b>\n\nУкажите сумму в долларах США, которую вы готовы заплатить за решение. Например: 50\nМинимум $${cfg.minBudgetUsd}.\n\nКак это работает: когда защитник возьмётся за кейс, бот выставит предоплату ${pct()}%, остальное оплачивается после решения. Оплата в @CryptoBot.`, [[btn("⬅️ Назад к заявке", "rep_confirm")], BACK]);
+  });
+  bot.action("rep_nobudget", async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "report_confirm") return;
+    delete u.data.budgetCents; store.save();
+    const v = confirmView(u);
+    return edit(ctx, v.text, v.rows);
+  });
+
+  bot.action("rep_confirm", async (ctx) => {
+    const u = ctx.state.u;
+    if (u.state !== "report_budget") return;
+    u.state = "report_confirm"; store.save();
+    const v = confirmView(u);
+    return edit(ctx, v.text, v.rows);
+  });
+
   const adminTicketText = (t) => {
     const p = PRIORITIES[t.prio];
     const c = CATEGORIES[t.cat];
     const who = t.username ? "@" + esc(t.username) : "без username";
-    return `<b>Заявка ${ticketCode(t.num)}</b> · ${STATUS[t.status]}\nПриоритет: ${p.icon} ${p.name}\nКатегория: ${esc(c.label)}\n👤 ${esc(t.name)} (${who}, id ${t.userId})\nВложений: ${t.evidenceCount}\n\nОписание: ${esc(t.desc)}`;
+    const urgent = t.urgent ? "⚡ <b>СРОЧНЫЙ ЗАПРОС (оплачен)</b>\n" : "";
+    return `${urgent}<b>Заявка ${ticketCode(t.num)}</b> · ${STATUS[t.status]}\nПриоритет: ${p.icon} ${p.name}\nКатегория: ${esc(c.label)}\n👤 ${esc(t.name)} (${who}, id ${t.userId})\nВложений: ${t.evidenceCount}\n\nОписание: ${esc(t.desc)}${payLine(t)}`;
   };
-  const adminTicketRows = (t) => [
-    [btn("🔧 Взять в работу", `tk_work_${t.num}`), btn("✅ Решено", `tk_done_${t.num}`)],
-    [btn("💬 Написать пользователю", `tk_reply_${t.num}`), btn("❌ Закрыть", `tk_close_${t.num}`)],
-  ];
-  bot.action("rep_send", async (ctx) => {
+  const adminTicketRows = (t) => {
+    const rows = [
+      [btn("🔧 Взять в работу", `tk_work_${t.num}`), btn("✅ Решено", `tk_done_${t.num}`)],
+      [btn("💬 Написать пользователю", `tk_reply_${t.num}`), btn("❌ Закрыть", `tk_close_${t.num}`)],
+    ];
+    if (t.budgetCents) {
+      const st = stageOf(t);
+      if (["none", "prepay_wait", "final_wait"].includes(st)) rows.push([btn("💳 Выставить счёт", `tk_inv_${t.num}`), btn("✅ Оплата вручную", `tk_man_${t.num}`)]);
+      if (["prepaid", "final_wait", "paid"].includes(st)) rows.push([btn("↩️ Возврат", `tk_ref_${t.num}`)]);
+    }
+    return rows;
+  };
+
+  async function submitTicket(ctx, urgent) {
     const u = ctx.state.u;
     if (u.state !== "report_confirm") return;
+    if (urgent && !payOn()) return say(ctx, "Приём оплаты сейчас не подключён.");
     const fp = finalPriority(u.data);
     db.counters.ticket += 1;
     const t = {
@@ -845,6 +1111,7 @@ export function buildBot(bot, deps) {
       prio: fp.key, chosen: u.data.prio, cat: u.data.cat, desc: u.data.desc,
       evidenceCount: u.data.evidence.length, status: "new", createdAt: now(), updatedAt: now(),
       assignee: null, firstResponseAt: null, log: [{ ts: now(), text: "Создана" }], msgs: [],
+      urgent: false, budgetCents: u.data.budgetCents ?? null, pay: { stage: "none" },
     };
     db.tickets.push(t);
     const evidence = u.data.evidence;
@@ -855,16 +1122,22 @@ export function buildBot(bot, deps) {
       for (const e of evidence) await tg.copyMessage(adminChat, e.chat, e.msg).catch(() => {});
     } catch (e) { console.error("не удалось отправить заявку в админ-чат:", e.message); }
     store.save();
-    await edit(ctx, `✅ Заявка ${ticketCode(t.num)} создана. Мы свяжемся с вами в этом чате.`, [[btn("📊 Статус", "cmd_status")], BACK]);
+    const note = t.budgetCents ? "\nКогда защитник возьмётся за работу, вы получите счёт на предоплату." : "";
+    await edit(ctx, `✅ Заявка ${ticketCode(t.num)} создана. Мы свяжемся с вами в этом чате.${note}`, [[btn("📊 Статус", "cmd_status")], BACK]);
     const steps = FIRST_STEPS[t.cat] ?? FIRST_STEPS.other;
-    return say(ctx, `<b>Что сделать прямо сейчас</b>\n\n${steps.map((s, i) => `${i + 1}. ${esc(s)}`).join("\n")}`);
-  });
-  bot.action(/^tk_(work|done|close|reply)_(\d+)$/, async (ctx) => {
+    await say(ctx, `<b>Что сделать прямо сейчас</b>\n\n${steps.map((s, i) => `${i + 1}. ${esc(s)}`).join("\n")}`);
+    if (urgent) await offerUrgent(ctx, t);
+  }
+  bot.action("rep_send", (ctx) => submitTicket(ctx, false));
+  bot.action("rep_urgent", (ctx) => submitTicket(ctx, true));
+
+  bot.action(/^tk_(work|done|close|reply|inv|man|ref)_(\d+)$/, async (ctx) => {
     if (!(ctx.chat.type === "private" || isAdminChat(ctx))) return ctx.answerCbQuery("Нет доступа").catch(() => {});
     if (!(await isDefender(ctx.from.id))) return ctx.answerCbQuery(NOT_DEF, { show_alert: true }).catch(() => {});
     const [, act, n] = ctx.match;
     const t = ticketOf(n);
     if (!t) return ctx.answerCbQuery("Не найдена").catch(() => {});
+    if (["inv", "man", "ref"].includes(act) && !(await isAdmin(ctx.from.id))) return ctx.answerCbQuery(NOT_ADMIN, { show_alert: true }).catch(() => {});
     const who = ctx.from.username ? "@" + ctx.from.username : String(ctx.from.id);
     if (act === "reply") {
       if (!t.userId) return ctx.answerCbQuery("Пользователь удалил данные", { show_alert: true }).catch(() => {});
@@ -877,15 +1150,58 @@ export function buildBot(bot, deps) {
       admin.state = "admin_reply"; admin.data = { num: t.num }; store.save();
       return ctx.answerCbQuery("Пишите в ЛС").catch(() => {});
     }
-    if (act === "work") { t.status = "work"; t.assignee = who; t.firstResponseAt ??= now(); logTicket(t, `Взял ${who}`); }
-    if (act === "done") { t.status = "solved"; logTicket(t, `Решена ${who}`); }
-    if (act === "close") { t.status = "closed"; logTicket(t, `Закрыта ${who}`); }
+    let toast = "Готово";
+    if (act === "done" && t.budgetCents && ["none", "prepay_wait"].includes(stageOf(t))) {
+      return ctx.answerCbQuery("⛔ Предоплата не получена. Сначала дождитесь оплаты клиента.", { show_alert: true }).catch(() => {});
+    }
+    if (act === "work") {
+      t.status = "work"; t.assignee = who; t.firstResponseAt ??= now(); logTicket(t, `Взял ${who}`);
+      if (t.budgetCents && stageOf(t) === "none" && t.userId && payOn()) {
+        try { await sendPrepayInvoice(t); toast = "Взято. Клиенту отправлен счёт на предоплату"; }
+        catch (e) { console.error("prepay invoice:", e.message); toast = "Взято, но счёт не выставился. Нажмите «Выставить счёт»"; }
+      }
+    }
+    if (act === "done") {
+      t.status = "solved"; logTicket(t, `Решена ${who}`);
+      if (t.budgetCents && stageOf(t) === "prepaid" && t.userId && payOn()) {
+        try { await sendFinalInvoice(t); toast = "Решено. Клиенту отправлен счёт на остаток"; }
+        catch (e) { console.error("final invoice:", e.message); toast = "Решено, но счёт не выставился. Нажмите «Выставить счёт»"; }
+      }
+    }
+    if (act === "close") {
+      t.status = "closed"; logTicket(t, `Закрыта ${who}`);
+      if (["prepaid", "final_wait"].includes(stageOf(t))) toast = "Закрыто. Оплата уже получена — решите вопрос возврата";
+    }
+    if (act === "inv") {
+      const st = stageOf(t);
+      try {
+        if (!t.budgetCents || !payOn() || !t.userId) toast = "Счёт выставить нельзя";
+        else if (st === "none" || st === "prepay_wait") { await sendPrepayInvoice(t); toast = "Счёт на предоплату отправлен клиенту"; }
+        else if (st === "final_wait") { await sendFinalInvoice(t); toast = "Счёт на остаток отправлен клиенту"; }
+        else toast = "Сейчас счёт не нужен";
+      } catch (e) { console.error("invoice:", e.message); toast = "Не удалось выставить счёт, смотрите логи"; }
+    }
+    if (act === "man") {
+      const st = stageOf(t);
+      if (st === "none" || st === "prepay_wait") { cancelActive(t, "prepay"); await markPrepaid(t, `вручную, ${who}`); }
+      else if (st === "final_wait") { cancelActive(t, "final"); await markFinalPaid(t, `вручную, ${who}`); }
+      else toast = "Нечего отмечать";
+    }
+    if (act === "ref") {
+      if (["prepaid", "final_wait", "paid"].includes(stageOf(t))) {
+        const got = paidSum(t);
+        setStage(t, "refunded"); cancelActive(t); t.status = "closed"; logTicket(t, `↩️ Возврат оформлен ${who}`);
+        if (t.userId) notify(t.userId, `↩️ По заявке ${ticketCode(t.num)} оформлен возврат. Администратор переведёт средства вручную. Если будут вопросы, напишите в ответ.`, [BACK]);
+        await toAdminSafe(`↩️ <b>Возврат по ${ticketCode(t.num)}</b>\nПереведите клиенту вручную через CryptoBot. Получено от клиента по кейсу: $${usd(got)}.`);
+        toast = "Возврат оформлен. Переведите деньги вручную";
+      } else toast = "Возвращать нечего";
+    }
     store.save();
-    await ctx.answerCbQuery("Готово").catch(() => {});
+    await ctx.answerCbQuery(toast, { show_alert: toast.length > 25 }).catch(() => {});
     const trows = adminTicketRows(t);
     if (ctx.chat.type === "private") trows.push([btn("⬅️ К списку", "dt_list")]);
     await edit(ctx, adminTicketText(t), trows);
-    if (t.userId) notify(t.userId, `Статус заявки ${ticketCode(t.num)} изменён: ${STATUS[t.status]}`, [[btn("📊 Статус", "cmd_status")]]);
+    if (["work", "done", "close"].includes(act) && t.userId) notify(t.userId, `Статус заявки ${ticketCode(t.num)} изменён: ${STATUS[t.status]}`, [[btn("📊 Статус", "cmd_status")]]);
   });
 
   async function statusHome(ctx, viaButton) {
@@ -903,8 +1219,13 @@ export function buildBot(bot, deps) {
   bot.action(/^st_(\d+)$/, async (ctx) => {
     const t = ticketOf(ctx.match[1]);
     if (!t || t.userId !== ctx.state.u.id) return;
-    const text = `<b>Заявка ${ticketCode(t.num)}</b>\nСтатус: ${STATUS[t.status]}\nОбновлена: ${fmtDate(t.updatedAt)} (${ago(t.updatedAt, now())})\n\nОписание: ${esc(t.desc)}`;
-    return edit(ctx, text, [[btn("✍️ Написать команде", `ureply_${t.num}`)], BACK]);
+    const text = `<b>Заявка ${ticketCode(t.num)}</b>\nСтатус: ${STATUS[t.status]}${t.urgent ? "\n⚡ Срочный запрос оплачен" : ""}\nОбновлена: ${fmtDate(t.updatedAt)} (${ago(t.updatedAt, now())})\n\nОписание: ${esc(t.desc)}${payLine(t)}`;
+    const rows = [];
+    const act = db.payments.find((p) => p.ticketNum === t.num && p.status === "active" && p.kind !== "urgent");
+    if (act) rows.push(...payRows(act));
+    if (payOn() && isOpen(t) && !t.urgent) rows.push([btn(`⚡ Срочно за $${usd(urgentCents())}`, `urg_${t.num}`)]);
+    rows.push([btn("✍️ Написать команде", `ureply_${t.num}`)], BACK);
+    return edit(ctx, text, rows);
   });
   bot.action(/^ureply_(\d+)$/, async (ctx) => {
     const t = ticketOf(ctx.match[1]);
@@ -1003,7 +1324,7 @@ export function buildBot(bot, deps) {
     return edit(ctx, "Пришлите id или @username пользователя. Он должен хотя бы раз запустить бота (/start).", [[btn("⬅️ Отмена", "adm_defs")]]);
   }));
 
-  const helpText = "ℹ️ <b>Справка</b>\n\nИспользуйте кнопки меню. Команды: /menu, /report, /join, /status, /cancel.\n/delete удаляет ваши данные из бота.";
+  const helpText = "ℹ️ <b>Справка</b>\n\nИспользуйте кнопки меню. Команды: /menu, /report, /join, /status, /cancel.\nПлатные и срочные заявки оплачиваются в @CryptoBot.\n/delete удаляет ваши данные из бота.";
   const helpRows = [[btn("🗑 Удалить данные", "help_del")], BACK];
   bot.command("help", (ctx) => say(ctx, helpText, helpRows));
   bot.action("cmd_help", async (ctx) => edit(ctx, helpText, helpRows));
@@ -1043,6 +1364,14 @@ export function buildBot(bot, deps) {
         u.state = "join_spec"; store.save();
         return say(ctx, specText, SPEC_ROWS(u.data.sel ?? []));
       case "report_desc": return onDescription(ctx, text);
+      case "report_budget": {
+        const n = Number(text.replace(",", ".").replace(/[^\d.]/g, ""));
+        const min = cfg.minBudgetUsd, max = cfg.maxBudgetUsd;
+        if (!Number.isFinite(n) || n < min || n > max) return say(ctx, `Укажите сумму числом от $${min} до $${max}. Например: 50`, [[btn("⬅️ Назад к заявке", "rep_confirm")], BACK]);
+        u.data.budgetCents = Math.round(n * 100); u.state = "report_confirm"; store.save();
+        const v = confirmView(u);
+        return say(ctx, v.text, v.rows);
+      }
       case "report_evidence":
         return say(ctx, "Пришлите файл или скриншот либо нажмите «Готово».", evidenceRows(u.data.evidence?.length ?? 0));
       case "adm_add": {
@@ -1111,7 +1440,7 @@ export function buildBot(bot, deps) {
   });
 
   bot.catch((err) => console.error("Ошибка бота:", err));
-  return { db };
+  return { db, pollPayments };
 }
 
 async function main() {
@@ -1128,7 +1457,12 @@ async function main() {
     store = createDb(cfg.dataDir);
     console.log("💾 Данные хранятся в локальном файле json");
   }
-  buildBot(bot, { cfg, store });
+  const app = buildBot(bot, { cfg, store });
+  if (cfg.cpToken) {
+    console.log("💳 Приём оплаты через Crypto Pay включён");
+    setInterval(() => app.pollPayments(), 60_000).unref();
+    app.pollPayments();
+  }
   const http = await import("node:http");
   http.createServer((_, res) => { res.writeHead(200); res.end("ok"); }).listen(Number(process.env.PORT) || 3000);
   await bot.telegram.setMyCommands([
